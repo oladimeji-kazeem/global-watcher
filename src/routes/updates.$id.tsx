@@ -31,7 +31,8 @@ export const Route = createFileRoute("/updates/$id")({
 });
 
 function ChangeDetail() {
-  const { change: c } = Route.useLoaderData();
+  const { change } = Route.useLoaderData() as { change: ImmigrationChange };
+  const c = change;
   const s = statusStyles[c.status];
   const related = changes.filter((x) => x.country === c.country && x.id !== c.id).slice(0, 3);
 

@@ -34,7 +34,7 @@ function UpdatesDatabase() {
   const navigate = Route.useNavigate();
   const [localQ, setLocalQ] = useState(search.q);
 
-  const update = (patch: Partial<typeof search>) => navigate({ search: (prev) => ({ ...prev, ...patch }) });
+  const update = (patch: Partial<z.infer<typeof searchSchema>>) => navigate({ search: (prev: any) => ({ ...prev, ...patch }) });
 
   const filtered = useMemo(() => {
     return changes.filter((c) => {
