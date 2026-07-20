@@ -9,38 +9,134 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WatchlistRouteImport } from './routes/watchlist'
+import { Route as UpdatesRouteImport } from './routes/updates'
+import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as CountriesRouteImport } from './routes/countries'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UpdatesIdRouteImport } from './routes/updates.$id'
 
+const WatchlistRoute = WatchlistRouteImport.update({
+  id: '/watchlist',
+  path: '/watchlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatesRoute = UpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TimelineRoute = TimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountriesRoute = CountriesRouteImport.update({
+  id: '/countries',
+  path: '/countries',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UpdatesIdRoute = UpdatesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => UpdatesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/countries': typeof CountriesRoute
+  '/timeline': typeof TimelineRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/watchlist': typeof WatchlistRoute
+  '/updates/$id': typeof UpdatesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/countries': typeof CountriesRoute
+  '/timeline': typeof TimelineRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/watchlist': typeof WatchlistRoute
+  '/updates/$id': typeof UpdatesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/countries': typeof CountriesRoute
+  '/timeline': typeof TimelineRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/watchlist': typeof WatchlistRoute
+  '/updates/$id': typeof UpdatesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/countries'
+    | '/timeline'
+    | '/updates'
+    | '/watchlist'
+    | '/updates/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/countries'
+    | '/timeline'
+    | '/updates'
+    | '/watchlist'
+    | '/updates/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/countries'
+    | '/timeline'
+    | '/updates'
+    | '/watchlist'
+    | '/updates/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CountriesRoute: typeof CountriesRoute
+  TimelineRoute: typeof TimelineRoute
+  UpdatesRoute: typeof UpdatesRouteWithChildren
+  WatchlistRoute: typeof WatchlistRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/watchlist': {
+      id: '/watchlist'
+      path: '/watchlist'
+      fullPath: '/watchlist'
+      preLoaderRoute: typeof WatchlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/updates': {
+      id: '/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof UpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/timeline': {
+      id: '/timeline'
+      path: '/timeline'
+      fullPath: '/timeline'
+      preLoaderRoute: typeof TimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/countries': {
+      id: '/countries'
+      path: '/countries'
+      fullPath: '/countries'
+      preLoaderRoute: typeof CountriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +144,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/updates/$id': {
+      id: '/updates/$id'
+      path: '/$id'
+      fullPath: '/updates/$id'
+      preLoaderRoute: typeof UpdatesIdRouteImport
+      parentRoute: typeof UpdatesRoute
+    }
   }
 }
 
+interface UpdatesRouteChildren {
+  UpdatesIdRoute: typeof UpdatesIdRoute
+}
+
+const UpdatesRouteChildren: UpdatesRouteChildren = {
+  UpdatesIdRoute: UpdatesIdRoute,
+}
+
+const UpdatesRouteWithChildren =
+  UpdatesRoute._addFileChildren(UpdatesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CountriesRoute: CountriesRoute,
+  TimelineRoute: TimelineRoute,
+  UpdatesRoute: UpdatesRouteWithChildren,
+  WatchlistRoute: WatchlistRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
