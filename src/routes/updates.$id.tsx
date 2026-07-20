@@ -1,9 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Calendar, CheckCircle2, ExternalLink, ShieldCheck, Users } from "lucide-react";
-import { changes, statusStyles, formatDate } from "@/lib/immigration-data";
+import { changes, statusStyles, formatDate, type ImmigrationChange } from "@/lib/immigration-data";
 
 export const Route = createFileRoute("/updates/$id")({
-  loader: ({ params }) => {
+  loader: ({ params }): { change: ImmigrationChange } => {
     const change = changes.find((c) => c.id === params.id);
     if (!change) throw notFound();
     return { change };
