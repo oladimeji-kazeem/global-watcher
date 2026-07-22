@@ -154,3 +154,36 @@ function MetaCard({ icon: Icon, label, value }: { icon: any; label: string; valu
     </div>
   );
 }
+
+function AdminNotifyPanel({ changeId }: { changeId: string }) {
+  const notify = useServerFn(notifyWatchlistMatches);
+  const [state, setState] = useState<{ status: "idle" | "loading" | "ok" | "err"; msg?: string }>({ status: "idle" });
+
+  const send = async () => {
+    setState({ status: "loading" });
+    try {
+      const res = await notify({ data: { changeId } });
+      setState({ status: "ok", msg: `Notified ${res.sent} subscriber${res.sent === 1 ? "" : "s"} (${res.matched} matched, ${res.skipped} skipped).` });
+    } catch (e) {
+      setState({ status: "err", msg: (e as Error).message });
+    }
+  };
+
+  return (
+    <section className="mt-6 rounded-2xl ring-gradient bg-card-gradient p-6 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <div className="text-sm font-medium">Publish alert</div>
+        <div className="text-xs text-muted-foreground mt-0.5">Sign-in required. Sends an email to every watchlist subscriber matching this change, with the official source link.</div>
+        {state.msg && (
+          <div className={`text-xs mt-2 ${state.status === "err" ? "text-[color:var(--danger)]" : "text-[color:var(--success)]"}`}>{state.msg}</div>
+        )}
+      </div>
+      <button onClick={send} disabled={state.status === "loading"}
+        className="inline-flex items-center gap-2 rounded-xl bg-hero-gradient text-white text-sm font-medium px-4 py-2.5 glow-cyan hover:opacity-95 disabled:opacity-50">
+        {state.status === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+        Send alerts to matches
+      </button>
+    </section>
+  );
+}
+}
