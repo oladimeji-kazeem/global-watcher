@@ -144,16 +144,8 @@ function ChangeDetail() {
   );
 }
 
-function MetaCard({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
-  return (
-    <div className="rounded-xl bg-background/50 border border-border p-4">
-      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-        <Icon className="h-3 w-3" /> {label}
-      </div>
-      <div className="text-sm font-medium">{value}</div>
-    </div>
-  );
-}
+
+
 
 function AdminNotifyPanel({ changeId }: { changeId: string }) {
   const notify = useServerFn(notifyWatchlistMatches);
