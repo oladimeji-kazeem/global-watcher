@@ -7,7 +7,7 @@ import {
 } from "@/lib/immigration-data";
 import { PageHeader } from "@/components/site-shell";
 
-export const Route = createFileRoute("/watchlist")({
+export const Route = createFileRoute("/_authenticated/watchlist")({
   head: () => ({
     meta: [
       { title: "My Watchlist — Immigration Radar" },
