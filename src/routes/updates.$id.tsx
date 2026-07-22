@@ -1,6 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Calendar, CheckCircle2, ExternalLink, ShieldCheck, Users } from "lucide-react";
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowLeft, Calendar, CheckCircle2, ExternalLink, ShieldCheck, Users, Send, Loader2 } from "lucide-react";
 import { changes, statusStyles, formatDate, type ImmigrationChange } from "@/lib/immigration-data";
+import { notifyWatchlistMatches } from "@/lib/notify.functions";
 
 export const Route = createFileRoute("/updates/$id")({
   loader: ({ params }): { change: ImmigrationChange } => {
@@ -108,6 +111,9 @@ function ChangeDetail() {
           Open official source <ExternalLink className="h-4 w-4" />
         </a>
       </section>
+
+      <AdminNotifyPanel changeId={c.id} />
+
 
       {related.length > 0 && (
         <section className="mt-10">

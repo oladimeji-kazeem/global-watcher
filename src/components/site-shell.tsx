@@ -1,6 +1,7 @@
-import { Link } from "@tanstack/react-router";
-import { Radar, ArrowUpRight, Bell } from "lucide-react";
-import type { ReactNode } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Radar, ArrowUpRight, Bell, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const nav = [
   { to: "/", label: "Dashboard" },
@@ -11,6 +12,28 @@ const nav = [
 ] as const;
 
 export function SiteHeader() {
+  const [email, setEmail] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setEmail(data.session?.user.email ?? null);
+      setReady(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
+        setEmail(session?.user.email ?? null);
+      }
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  };
+
   return (
     <header className="relative z-10 border-b border-border/50 backdrop-blur-xl bg-background/40">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
@@ -36,9 +59,23 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link to="/watchlist" className="inline-flex items-center gap-1.5 rounded-lg bg-hero-gradient text-white text-sm font-medium px-4 py-2 glow-cyan hover:opacity-90 transition">
-            <Bell className="h-3.5 w-3.5" /> Alerts
-          </Link>
+          {ready && email ? (
+            <>
+              <Link to="/watchlist" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-hero-gradient text-white text-sm font-medium px-4 py-2 glow-cyan hover:opacity-90 transition">
+                <Bell className="h-3.5 w-3.5" /> Alerts
+              </Link>
+              <div className="hidden md:flex items-center gap-2 rounded-lg border border-border bg-background/40 px-3 py-1.5 text-xs text-muted-foreground">
+                <UserIcon className="h-3.5 w-3.5" /> {email}
+              </div>
+              <button onClick={signOut} className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background/40 text-sm px-3 py-2 hover:bg-background/70 transition">
+                <LogOut className="h-3.5 w-3.5" /> <span className="hidden sm:inline">Sign out</span>
+              </button>
+            </>
+          ) : (
+            <Link to="/auth" className="inline-flex items-center gap-1.5 rounded-lg bg-hero-gradient text-white text-sm font-medium px-4 py-2 glow-cyan hover:opacity-90 transition">
+              <LogIn className="h-3.5 w-3.5" /> Sign in
+            </Link>
+          )}
         </div>
       </div>
     </header>
