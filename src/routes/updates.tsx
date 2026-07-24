@@ -158,8 +158,8 @@ function UpdatesDatabase() {
               {paged.map((c) => {
                 const s = statusStyles[c.status];
                 return (
-                  <div key={c.id}
-                    onClick={() => navigate({ to: "/updates/$id", params: { id: c.id } })}
+                  <Link key={c.id}
+                    to="/updates/$id" params={{ id: c.id }}
                     className="group/row grid grid-cols-1 lg:grid-cols-[1.6fr_1.2fr_0.9fr_0.9fr_0.6fr_auto] gap-3 lg:gap-4 px-5 py-4 items-start lg:items-center hover:bg-background/40 transition cursor-pointer">
 
                     <div className="min-w-0">
@@ -182,14 +182,18 @@ function UpdatesDatabase() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <a href={c.source_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="text-muted-foreground hover:text-[color:var(--primary)] transition p-2 -m-2" title="Official source">
+                      <span
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(c.source_url, '_blank', 'noopener,noreferrer'); }}
+                        className="text-muted-foreground hover:text-[color:var(--primary)] transition p-2 -m-2 cursor-pointer"
+                        title="Official source"
+                      >
                         <ExternalLink className="h-4 w-4" />
-                      </a>
+                      </span>
                       <div className="text-muted-foreground group-hover/row:text-[color:var(--primary)] transition p-2 -m-2" title="View details">
                         <ArrowUpRight className="h-4 w-4" />
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
               {paged.length === 0 && (

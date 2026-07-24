@@ -15,19 +15,19 @@ const countries = [
   { id: 'IE', flag: 'IE', name: 'Ireland' },
 ];
 
-const visaData: Record<string, Array<{ title: string, fee: string, processing: string, requirements: string }>> = {
+const visaData: Record<string, Array<{ title: string, fee: string, processing: string, requirements: string, url: string }>> = {
   'GB': [
-    { title: 'Skilled Worker Visa', fee: '£719–£1,639', processing: '3–8 weeks', requirements: 'Job offer from licensed sponsor, salary threshold, English language' },
-    { title: 'Student Visa', fee: '£490', processing: '3 weeks', requirements: 'CAS from licensed institution, financial evidence' },
-    { title: 'Graduate Visa', fee: '£822', processing: '8 weeks', requirements: 'Completed UK degree, valid Student visa' },
-    { title: 'Family Visa', fee: '£1,938', processing: '12 weeks', requirements: 'Relationship evidence, financial requirement' },
-    { title: 'Global Talent Visa', fee: '£766', processing: '3 weeks', requirements: 'Endorsement from approved body' },
-    { title: 'Settlement / ILR', fee: '£3,029', processing: '6 months', requirements: '5 years continuous residence, Life in the UK test' }
+    { title: 'Skilled Worker Visa', fee: '£719–£1,639', processing: '3–8 weeks', requirements: 'Job offer from licensed sponsor, salary threshold, English language', url: 'https://www.gov.uk/skilled-worker-visa' },
+    { title: 'Student Visa', fee: '£490', processing: '3 weeks', requirements: 'CAS from licensed institution, financial evidence', url: 'https://www.gov.uk/student-visa' },
+    { title: 'Graduate Visa', fee: '£822', processing: '8 weeks', requirements: 'Completed UK degree, valid Student visa', url: 'https://www.gov.uk/graduate-visa' },
+    { title: 'Family Visa', fee: '£1,938', processing: '12 weeks', requirements: 'Relationship evidence, financial requirement', url: 'https://www.gov.uk/uk-family-visa' },
+    { title: 'Global Talent Visa', fee: '£766', processing: '3 weeks', requirements: 'Endorsement from approved body', url: 'https://www.gov.uk/global-talent' },
+    { title: 'Settlement / ILR', fee: '£3,029', processing: '6 months', requirements: '5 years continuous residence, Life in the UK test', url: 'https://www.gov.uk/indefinite-leave-to-remain' }
   ],
   'CA': [
-    { title: 'Express Entry', fee: '$1,365 CAD', processing: '6 months', requirements: 'Comprehensive Ranking System score, medical exam' },
-    { title: 'Study Permit', fee: '$150 CAD', processing: '9-12 weeks', requirements: 'Letter of Acceptance, proof of financial support' },
-    { title: 'Post-Graduation Work Permit', fee: '$255 CAD', processing: '10 weeks', requirements: 'Graduated from designated learning institution' }
+    { title: 'Express Entry', fee: '$1,365 CAD', processing: '6 months', requirements: 'Comprehensive Ranking System score, medical exam', url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry.html' },
+    { title: 'Study Permit', fee: '$150 CAD', processing: '9-12 weeks', requirements: 'Letter of Acceptance, proof of financial support', url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada.html' },
+    { title: 'Post-Graduation Work Permit', fee: '$255 CAD', processing: '10 weeks', requirements: 'Graduated from designated learning institution', url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/work/after-graduation.html' }
   ]
 };
 
@@ -69,8 +69,11 @@ function VisaCategoriesPage() {
           {visas.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {visas.map((v, i) => (
-                <div key={i} className="rounded-xl border border-border/40 bg-card/20 backdrop-blur-md p-6 hover:bg-white/[0.03] transition flex flex-col">
-                  <h3 className="text-[17px] font-semibold text-white mb-5">{v.title}</h3>
+                <a key={i} href={v.url} target="_blank" rel="noreferrer" className="rounded-xl border border-border/40 bg-card/20 backdrop-blur-md p-6 hover:bg-white/[0.05] hover:border-border transition flex flex-col group">
+                  <h3 className="text-[17px] font-semibold text-white mb-5 flex items-center justify-between">
+                    {v.title}
+                    <svg className="h-4 w-4 text-muted-foreground group-hover:text-[color:var(--primary)] transition" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
+                  </h3>
                   <div className="space-y-3 flex-1 text-[13px]">
                     <div className="flex items-start gap-2">
                       <span className="text-muted-foreground w-20 shrink-0">Fee:</span>
@@ -85,7 +88,7 @@ function VisaCategoriesPage() {
                       <span className="text-foreground/90 leading-[1.6] font-medium">{v.requirements}</span>
                     </div>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           ) : (
