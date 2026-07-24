@@ -28,6 +28,29 @@ const visaData: Record<string, Array<{ title: string, fee: string, processing: s
     { title: 'Express Entry', fee: '$1,365 CAD', processing: '6 months', requirements: 'Comprehensive Ranking System score, medical exam', url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry.html' },
     { title: 'Study Permit', fee: '$150 CAD', processing: '9-12 weeks', requirements: 'Letter of Acceptance, proof of financial support', url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada.html' },
     { title: 'Post-Graduation Work Permit', fee: '$255 CAD', processing: '10 weeks', requirements: 'Graduated from designated learning institution', url: 'https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/work/after-graduation.html' }
+  ],
+  'AU': [
+    { title: 'Subclass 482 (TSS)', fee: '$1,455 - $3,035 AUD', processing: '2-5 months', requirements: 'Sponsored by approved employer, skill assessment', url: 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/temporary-skill-shortage-482' },
+    { title: 'Subclass 189 (Independent)', fee: '$4,640 AUD', processing: '12-14 months', requirements: 'Points tested, occupation on MLTSSL skill list', url: 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-independent-189' },
+    { title: 'Subclass 190 (State Nominated)', fee: '$4,640 AUD', processing: '10-12 months', requirements: 'Nominated by Australian state or territory government', url: 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/skilled-nominated-190' },
+    { title: 'Subclass 500 (Student)', fee: '$710 AUD', processing: '4-8 weeks', requirements: 'Confirmation of Enrolment (CoE), Genuine Student test', url: 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/student-500' }
+  ],
+  'DE': [
+    { title: 'EU Blue Card', fee: '€113', processing: '4-8 weeks', requirements: 'University degree, job offer meeting salary threshold', url: 'https://www.make-it-in-germany.com/en/visa-residence/types/eu-blue-card' },
+    { title: 'Opportunity Card (Chancenkarte)', fee: '€75', processing: '4-6 weeks', requirements: 'Points-based job seeker visa, B1 German or B2 English', url: 'https://www.make-it-in-germany.com/en/visa-residence/types/opportunity-card' },
+    { title: 'Freelance Visa', fee: '€100', processing: '2-4 months', requirements: 'Business plan, financial backing, client letters (if in Germany)', url: 'https://www.make-it-in-germany.com/en/visa-residence/types/freelance-self-employed' }
+  ],
+  'US': [
+    { title: 'H-1B Specialty Occupation', fee: '$460 + $10 Registration', processing: '2-6 months', requirements: 'Bachelor\'s degree, employer sponsorship, lottery selection', url: 'https://www.uscis.gov/working-in-the-united-states/h-1b-specialty-occupations' },
+    { title: 'L-1 Intracompany Transferee', fee: '$460', processing: '2-4 months', requirements: 'Must have worked 1 continuous year abroad for the company', url: 'https://www.uscis.gov/working-in-the-united-states/temporary-workers/l-1a-intracompany-transferee-executive-or-manager' },
+    { title: 'O-1 Extraordinary Ability', fee: '$460', processing: '2-3 months', requirements: 'Sustained national or international acclaim, extensive documentation', url: 'https://www.uscis.gov/working-in-the-united-states/temporary-workers/o-1-visa-individuals-with-extraordinary-ability-or-achievement' },
+    { title: 'F-1 Student Visa', fee: '$185 + $350 SEVIS', processing: '2-4 weeks', requirements: 'Accepted at SEVP approved school, financial support proof', url: 'https://travel.state.gov/content/travel/en/us-visas/study/student-visa.html' },
+    { title: 'EB-2 NIW (Green Card)', fee: '$715 + form fees', processing: '12-18 months', requirements: 'Advanced degree, endeavor of national interest', url: 'https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-second-preference-eb-2' }
+  ],
+  'IE': [
+    { title: 'Critical Skills Employment Permit', fee: '€1,000', processing: '1-2 months', requirements: 'Job offer over €38,000 in eligible occupation list', url: 'https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/permit-types/critical-skills-employment-permit/' },
+    { title: 'General Employment Permit', fee: '€1,000', processing: '2-3 months', requirements: 'Job offer over €34,000, subject to labor market needs test', url: 'https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/permit-types/general-employment-permit/' },
+    { title: 'Stamp 1G (Graduate)', fee: '€300 (Registration)', processing: '3-4 weeks', requirements: 'Graduated from Irish higher education institution', url: 'https://www.irishimmigration.ie/my-situation-has-changed-since-i-arrived-in-ireland/third-level-graduate-programme/' }
   ]
 };
 

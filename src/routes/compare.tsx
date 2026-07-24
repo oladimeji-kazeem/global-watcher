@@ -28,9 +28,21 @@ const COUNTRY_PROFILES: Record<string, any> = {
     timeline: '3 to 6 weeks (If sponsored)',
     prPath: 'Eligible for ILR after 5 years',
     market: 'Shortages in engineering & finance',
-    friction: 'High minimum salary thresholds block juniors.',
+    friction: 'Minimum salary threshold leaped to £38,700.',
     pros: ['Fast processing timeline', 'No absolute point cut-offs (if sponsored)', 'High tier global city access'],
-    cons: ['Tied strictly to employer sponsorship', 'Massive NHS health surcharges', 'Dependant restrictions on some visas']
+    cons: ['Tied strictly to employer sponsorship', 'Massive NHS health surcharges', 'Extremely high barrier to entry for junior roles']
+  },
+  'us': {
+    name: 'United States (H-1B)',
+    flag: '🇺🇸',
+    pathway: 'Employer-Sponsored Lottery',
+    costScore: 'High ($$$)',
+    timeline: '3 to 8 months (Lottery dependent)',
+    prPath: 'Significant Green Card backlogs',
+    market: 'Dominated by Big Tech & STEM',
+    friction: 'Strict 85,000 annual quota lottery system.',
+    pros: ['Unmatched global compensation packages', 'Status and prestige of US job market', 'Spouse can work (Under specific conditions)'],
+    cons: ['Fundamentally a lottery—no absolute guarantees', 'Green Card path can take decades depending on nationality', 'Loss of job means 60 days to leave the country']
   },
   'au': {
     name: 'Australia (Subclass 189/190)',
@@ -60,7 +72,7 @@ const COUNTRY_PROFILES: Record<string, any> = {
 
 function ComparisonSimulatorPage() {
   const [leftCountry, setLeftCountry] = useState('ca');
-  const [rightCountry, setRightCountry] = useState('gb');
+  const [rightCountry, setRightCountry] = useState('us');
 
   const left = COUNTRY_PROFILES[leftCountry];
   const right = COUNTRY_PROFILES[rightCountry];
