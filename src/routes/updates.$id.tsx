@@ -21,9 +21,9 @@ export const Route = createFileRoute("/updates/$id")({
     const c = loaderData.change;
     return {
       meta: [
-        { title: `${c.title} — ${c.country} ${c.visaType} | Immigration Radar` },
+        { title: `${c.title} — ${c.country} ${c.visa_type} | Immigration Radar` },
         { name: "description", content: c.description },
-        { property: "og:title", content: `${c.title} — ${c.country} ${c.visaType}` },
+        { property: "og:title", content: `${c.title} — ${c.country} ${c.visa_type}` },
         { property: "og:description", content: c.description },
       ],
     };

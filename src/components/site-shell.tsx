@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Radar, ArrowUpRight, Bell, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { Radar, ArrowUpRight, Bell, LogIn, LogOut, User as UserIcon, FileText, Globe, Clock, Shield } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -67,16 +67,19 @@ export function SiteHeader() {
           </div>
         </Link>
         <nav className="hidden md:flex items-center gap-1 rounded-full border border-border bg-card/40 backdrop-blur p-1">
-          {nav.map((n) => (
-            <Link
-              key={n.to}
-              to={n.to}
-              activeOptions={{ exact: n.to === "/" }}
-              className="px-3.5 py-1.5 text-sm text-muted-foreground rounded-full transition data-[status=active]:bg-hero-gradient data-[status=active]:text-white data-[status=active]:glow-cyan hover:text-foreground"
-            >
-              {n.label}
-            </Link>
-          ))}
+          <Link
+            to="/"
+            activeOptions={{ exact: true }}
+            className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2"
+          >
+            Dashboard
+          </Link>
+          <Link
+            to="/updates"
+            className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2"
+          >
+            <Radar className="h-4 w-4" /> Explore
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
           {ready && email ? (
@@ -167,3 +170,35 @@ export function PageHeader({ eyebrow, title, description, action }: { eyebrow: s
 }
 
 export { ArrowUpRight };
+
+export function AppSidebarLayout({ children }: { children: ReactNode }) {
+  const sideNav: any[] = [
+    { to: "/updates", label: "Database", icon: FileText },
+    { to: "/countries", label: "Countries", icon: Globe },
+    { to: "/timeline", label: "Timeline", icon: Clock },
+    { to: "/visa-categories", label: "Visa Categories", icon: Shield },
+    { to: "/watchlist", label: "Watchlist", icon: Bell },
+    { to: "/profile", label: "My Profile", icon: UserIcon },
+  ];
+
+  return (
+    <div className="flex flex-col md:flex-row relative z-0">
+      <aside className="w-full md:w-64 shrink-0 border-r border-border/50 bg-background/50 backdrop-blur-xl flex flex-col md:sticky top-0 md:h-screen">
+        <div className="p-4 md:pt-10 space-y-1.5 overflow-y-auto">
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground px-3 flex items-center gap-2 mb-3"><Radar className="h-3 w-3" /> Explore Hub</div>
+          {sideNav.map((n, i) => {
+            const Icon = n.icon;
+            return (
+              <Link key={i} to={n.to} search={n.search} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card/60 transition data-[status=active]:bg-hero-gradient data-[status=active]:text-white data-[status=active]:glow-cyan hover:text-foreground">
+                <Icon className="h-4 w-4" /> {n.label}
+              </Link>
+            )
+          })}
+        </div>
+      </aside>
+      <div className="flex-1 w-full min-w-0">
+        {children}
+      </div>
+    </div>
+  );
+}

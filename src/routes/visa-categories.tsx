@@ -1,0 +1,100 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { AppSidebarLayout } from "@/components/site-shell";
+import { useState } from "react";
+
+export const Route = createFileRoute("/visa-categories")({
+  component: VisaCategoriesPage,
+});
+
+const countries = [
+  { id: 'GB', flag: 'GB', name: 'United Kingdom' },
+  { id: 'CA', flag: 'CA', name: 'Canada' },
+  { id: 'AU', flag: 'AU', name: 'Australia' },
+  { id: 'DE', flag: 'DE', name: 'Germany' },
+  { id: 'US', flag: 'US', name: 'United States' },
+  { id: 'IE', flag: 'IE', name: 'Ireland' },
+];
+
+const visaData: Record<string, Array<{ title: string, fee: string, processing: string, requirements: string }>> = {
+  'GB': [
+    { title: 'Skilled Worker Visa', fee: '£719–£1,639', processing: '3–8 weeks', requirements: 'Job offer from licensed sponsor, salary threshold, English language' },
+    { title: 'Student Visa', fee: '£490', processing: '3 weeks', requirements: 'CAS from licensed institution, financial evidence' },
+    { title: 'Graduate Visa', fee: '£822', processing: '8 weeks', requirements: 'Completed UK degree, valid Student visa' },
+    { title: 'Family Visa', fee: '£1,938', processing: '12 weeks', requirements: 'Relationship evidence, financial requirement' },
+    { title: 'Global Talent Visa', fee: '£766', processing: '3 weeks', requirements: 'Endorsement from approved body' },
+    { title: 'Settlement / ILR', fee: '£3,029', processing: '6 months', requirements: '5 years continuous residence, Life in the UK test' }
+  ],
+  'CA': [
+    { title: 'Express Entry', fee: '$1,365 CAD', processing: '6 months', requirements: 'Comprehensive Ranking System score, medical exam' },
+    { title: 'Study Permit', fee: '$150 CAD', processing: '9-12 weeks', requirements: 'Letter of Acceptance, proof of financial support' },
+    { title: 'Post-Graduation Work Permit', fee: '$255 CAD', processing: '10 weeks', requirements: 'Graduated from designated learning institution' }
+  ]
+};
+
+function VisaCategoriesPage() {
+  const [activeCountry, setActiveCountry] = useState('GB');
+
+  const visas = visaData[activeCountry] || [];
+
+  return (
+    <AppSidebarLayout>
+      <main>
+        <div className="mx-auto max-w-7xl px-6 pt-12 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="text-[10px] font-bold tracking-[0.2em] text-[color:var(--primary)]/90 mb-4 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]" /> LIVE MONITORING &middot; 6 JURISDICTIONS
+            </div>
+            <div className="text-[10px] font-bold tracking-[0.2em] text-[color:var(--primary)] mb-1 flex items-center gap-2">
+              REFERENCE DATA
+            </div>
+            <h1 className="text-3xl font-semibold tracking-tight text-white mb-2">Visa categories</h1>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 mb-8 mt-2">
+          <div className="flex flex-wrap items-center gap-3">
+            {countries.map(c => (
+              <button
+                key={c.id}
+                onClick={() => setActiveCountry(c.id)}
+                className={`flex items-center gap-2 px-4 py-2 text-[15px] rounded-lg border font-medium transition ${activeCountry === c.id ? 'border-[color:var(--primary)] text-white bg-[color:var(--primary)]/10 shadow-[0_0_20px_rgba(45,160,153,0.15)]' : 'border-border/60 text-muted-foreground hover:border-border hover:text-white'}`}
+              >
+                <span className="text-[10px] uppercase font-bold tracking-wider">{c.flag}</span> {c.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 pb-24">
+          {visas.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {visas.map((v, i) => (
+                <div key={i} className="rounded-xl border border-border/40 bg-card/20 backdrop-blur-md p-6 hover:bg-white/[0.03] transition flex flex-col">
+                  <h3 className="text-[17px] font-semibold text-white mb-5">{v.title}</h3>
+                  <div className="space-y-3 flex-1 text-[13px]">
+                    <div className="flex items-start gap-2">
+                      <span className="text-muted-foreground w-20 shrink-0">Fee:</span>
+                      <span className="text-foreground/90 font-medium">{v.fee}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-muted-foreground w-20 shrink-0">Processing:</span>
+                      <span className="text-foreground/90 font-medium">{v.processing}</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-muted-foreground w-20 shrink-0">Requirements:</span>
+                      <span className="text-foreground/90 leading-[1.6] font-medium">{v.requirements}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-border/40 bg-card/20 backdrop-blur-md p-12 text-center text-muted-foreground/80">
+              Reference data for {countries.find(c => c.id === activeCountry)?.name} is currently being mapped into our database. Check back soon.
+            </div>
+          )}
+        </div>
+      </main>
+    </AppSidebarLayout>
+  );
+}
