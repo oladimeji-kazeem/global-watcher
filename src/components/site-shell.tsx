@@ -11,6 +11,26 @@ const nav = [
   { to: "/watchlist", label: "Watchlist" },
 ] as const;
 
+function CookieBanner() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (!localStorage.getItem("cookie_consent")) setVisible(true);
+  }, []);
+  if (!visible) return null;
+  return (
+    <div className="fixed bottom-6 left-6 right-6 md:right-auto md:max-w-sm z-50 rounded-2xl ring-gradient bg-card-gradient p-5 shadow-elegant flex flex-col gap-3">
+      <div className="text-sm font-medium">Data Privacy & Cookies</div>
+      <div className="text-xs text-muted-foreground leading-relaxed">
+        We use essential cookies to provide our services and optional analytics cookies to understand how visitors use our platform.
+      </div>
+      <div className="flex items-center gap-2 pt-1">
+        <button onClick={() => { localStorage.setItem("cookie_consent", "all"); setVisible(false); }} className="px-4 py-2 rounded-xl bg-[color:var(--primary)] text-white text-xs font-semibold glow-cyan transition">Accept</button>
+        <button onClick={() => { localStorage.setItem("cookie_consent", "essential"); setVisible(false); }} className="px-4 py-2 rounded-xl bg-background/50 border border-border text-xs font-medium hover:bg-background/80 transition">Essential Only</button>
+      </div>
+    </div>
+  );
+}
+
 export function SiteHeader() {
   const [email, setEmail] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -91,7 +111,9 @@ export function SiteFooter() {
             <div className="h-7 w-7 rounded-lg bg-hero-gradient grid place-items-center"><Radar className="h-4 w-4 text-white" /></div>
             <span className="font-display font-semibold">Immigration Radar</span>
           </div>
-          <p className="text-muted-foreground text-xs max-w-xs">Global immigration intelligence powered by verified official sources. Guidance only — not legal advice.</p>
+          <p className="text-muted-foreground text-xs max-w-xs leading-relaxed">
+            This is just information sourced from various countries' sites and portals. We are neither immigration consultants nor an immigration law firm. All information provided is for general guidance only and should not be taken as legal advice.
+          </p>
         </div>
         <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground">
           <div className="space-y-1.5">
@@ -124,6 +146,7 @@ export function PageShell({ children }: { children: ReactNode }) {
       <div className="pointer-events-none absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-[color:var(--primary)]/20 blur-3xl animate-float-slow" />
       <div className="pointer-events-none absolute top-1/3 -left-40 h-[400px] w-[400px] rounded-full bg-[color:var(--accent)]/20 blur-3xl animate-float-slow" />
       <div className="relative">{children}</div>
+      <CookieBanner />
     </div>
   );
 }

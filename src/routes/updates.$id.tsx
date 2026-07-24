@@ -53,7 +53,7 @@ function ChangeDetail() {
           <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${s.badge}`}>
             <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} /> {s.label}
           </span>
-          <span className="rounded-full border border-border bg-background/40 px-2.5 py-0.5 text-[11px] text-muted-foreground">{c.visaType}</span>
+          <span className="rounded-full border border-border bg-background/40 px-2.5 py-0.5 text-[11px] text-muted-foreground">{c.visa_type}</span>
           <span className="rounded-full border border-border bg-background/40 px-2.5 py-0.5 text-[11px] text-muted-foreground">{c.category}</span>
         </div>
         <div className="flex items-start gap-5">
@@ -66,8 +66,8 @@ function ChangeDetail() {
         </div>
 
         <div className="grid sm:grid-cols-3 gap-3 pt-4">
-          <MetaCard icon={Calendar} label="Effective date" value={formatDate(c.effectiveDate)} />
-          <MetaCard icon={Calendar} label="Announced" value={formatDate(c.announcementDate)} />
+          <MetaCard icon={Calendar} label="Effective date" value={formatDate(c.effective_date)} />
+          <MetaCard icon={Calendar} label="Announced" value={formatDate(c.announcement_date)} />
           <MetaCard icon={Users} label="Impact" value={c.impact} />
         </div>
       </header>
@@ -75,21 +75,21 @@ function ChangeDetail() {
       <section className="grid md:grid-cols-2 gap-4 mt-6">
         <div className="rounded-2xl bg-background/60 border border-border p-6">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Previous rule</div>
-          <div className="text-base leading-relaxed line-through decoration-[color:var(--danger)]/60 decoration-2">{c.previousRule}</div>
+          <div className="text-base leading-relaxed line-through decoration-[color:var(--danger)]/60 decoration-2">{c.previous_rule}</div>
         </div>
         <div className="rounded-2xl bg-[color:var(--primary)]/5 border border-[color:var(--primary)]/25 p-6 glow-cyan">
           <div className="text-[10px] uppercase tracking-widest text-[color:var(--primary)] mb-2">New rule</div>
-          <div className="text-base leading-relaxed font-medium">{c.newRule}</div>
+          <div className="text-base leading-relaxed font-medium">{c.new_rule}</div>
         </div>
       </section>
 
       <section className="mt-8 rounded-2xl ring-gradient bg-card-gradient p-6 md:p-8 space-y-4">
         <h2 className="text-xl font-semibold">Full details</h2>
-        <p className="text-muted-foreground leading-relaxed">{c.longDescription}</p>
+        <p className="text-muted-foreground leading-relaxed">{c.long_description}</p>
         <div className="pt-2">
           <div className="text-sm font-medium mb-2">Key points</div>
           <ul className="space-y-2">
-            {c.keyPoints.map((k, i) => (
+            {c.key_points?.map((k, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                 <CheckCircle2 className="h-4 w-4 text-[color:var(--success)] mt-0.5 shrink-0" />
                 <span>{k}</span>
@@ -106,10 +106,10 @@ function ChangeDetail() {
           </div>
           <div>
             <div className="text-sm font-medium">Verified against official source</div>
-            <div className="text-xs text-muted-foreground">{c.sourceName} · reviewed by {c.reviewedBy}</div>
+            <div className="text-xs text-muted-foreground">{c.source_name} · reviewed by {c.reviewed_by}</div>
           </div>
         </div>
-        <a href={c.sourceUrl} target="_blank" rel="noreferrer"
+        <a href={c.source_url} target="_blank" rel="noreferrer"
           className="inline-flex items-center gap-2 rounded-xl bg-hero-gradient text-white text-sm font-medium px-4 py-2.5 glow-cyan hover:opacity-95">
           Open official source <ExternalLink className="h-4 w-4" />
         </a>
@@ -129,10 +129,10 @@ function ChangeDetail() {
                   className="rounded-2xl ring-gradient bg-card-gradient p-4 hover:shadow-elegant transition block">
                   <div className="flex items-center gap-2 mb-2">
                     <span className={`h-2 w-2 rounded-full ${rs.dot}`} />
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{r.visaType}</span>
+                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{r.visa_type}</span>
                   </div>
                   <div className="font-medium text-sm leading-snug">{r.title}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{formatDate(r.effectiveDate)}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{formatDate(r.effective_date)}</div>
                 </Link>
               );
             })}
@@ -140,8 +140,8 @@ function ChangeDetail() {
         </section>
       )}
 
-      <p className="text-[11px] text-muted-foreground mt-10 text-center">
-        For guidance only. Always verify with the official authority before making immigration decisions.
+      <p className="text-[11px] text-muted-foreground mt-10 text-center leading-relaxed">
+        <strong>Information Only:</strong> This is just information from various countries' sites and portals. We are neither immigration consultants nor law firms for immigration. Always consult with certified counsel.
       </p>
     </main>
   );
