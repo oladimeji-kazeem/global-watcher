@@ -61,7 +61,7 @@ function Hero() {
             Live — monitoring 47 official sources
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tighter leading-[1.02]">
-            The <span className="text-gradient">Bloomberg Terminal</span> for immigration intelligence.
+            The World's <span className="text-gradient">Immigration Intelligence Platform</span>.
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl leading-relaxed">
             Track visa rule changes, salary thresholds and policy shifts across 40+ countries — verified against official government sources, delivered before decisions are made.
@@ -178,7 +178,7 @@ function WatchlistCTA({ changes }: { changes: ImmigrationChange[] }) {
                   <div className="text-xl">{c.flag}</div>
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium truncate">{c.title}</div>
-                    <div className="text-xs text-muted-foreground truncate">{c.visaType} · {formatDate(c.effectiveDate)}</div>
+                    <div className="text-xs text-muted-foreground truncate">{c.visa_type} · {formatDate(c.effective_date)}</div>
                   </div>
                   <span className={`h-2 w-2 rounded-full ${s.dot}`} />
                 </Link>
