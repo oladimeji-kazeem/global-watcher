@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Filter, X, Calendar, ArrowUpRight, ArrowUpDown, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -50,7 +50,7 @@ const SORT_OPTIONS: [Search["sort"], string][] = [
 function UpdatesDatabase() {
   const { changes, options: { countries: allCountries, visaTypes: allVisaTypes, statuses: allStatuses } } = Route.useLoaderData();
   const search = Route.useSearch();
-  const navigate = useNavigate();
+  const navigate = Route.useNavigate();
   const [localQ, setLocalQ] = useState(search.q);
 
   // Any filter/search/sort change resets page to 1; page changes preserve everything else.
@@ -159,12 +159,11 @@ function UpdatesDatabase() {
               return (
                 <div key={c.id}
                   onClick={() => navigate({ to: "/updates/$id", params: { id: c.id } })}
-                  className="grid grid-cols-1 lg:grid-cols-[1.6fr_1.2fr_0.9fr_0.9fr_0.6fr_auto] gap-3 lg:gap-4 px-5 py-4 items-start lg:items-center hover:bg-background/40 transition cursor-pointer">
+                  className="group/row grid grid-cols-1 lg:grid-cols-[1.6fr_1.2fr_0.9fr_0.9fr_0.6fr_auto] gap-3 lg:gap-4 px-5 py-4 items-start lg:items-center hover:bg-background/40 transition cursor-pointer">
+
                   <div className="min-w-0">
-                    <Link to="/updates/$id" params={{ id: c.id }} onClick={(e) => e.stopPropagation()} className="block group">
-                      <div className="font-medium text-sm truncate group-hover:text-[color:var(--primary)] transition">{c.title}</div>
-                      <div className="text-xs text-muted-foreground truncate">{c.description}</div>
-                    </Link>
+                    <div className="font-medium text-sm truncate group-hover/row:text-[color:var(--primary)] transition">{c.title}</div>
+                    <div className="text-xs text-muted-foreground truncate">{c.description}</div>
                   </div>
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="text-lg leading-none">{c.flag}</div>
@@ -181,12 +180,12 @@ function UpdatesDatabase() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <a href={c.source_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="text-muted-foreground hover:text-[color:var(--primary)] transition" title="Official source">
+                    <a href={c.source_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="text-muted-foreground hover:text-[color:var(--primary)] transition p-2 -m-2" title="Official source">
                       <ExternalLink className="h-4 w-4" />
                     </a>
-                    <Link to="/updates/$id" params={{ id: c.id }} onClick={(e) => e.stopPropagation()} className="text-muted-foreground hover:text-[color:var(--primary)] transition" title="View details">
+                    <div className="text-muted-foreground group-hover/row:text-[color:var(--primary)] transition p-2 -m-2" title="View details">
                       <ArrowUpRight className="h-4 w-4" />
-                    </Link>
+                    </div>
                   </div>
                 </div>
               );

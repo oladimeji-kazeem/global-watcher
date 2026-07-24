@@ -83,21 +83,42 @@ function ChangeDetail() {
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl ring-gradient bg-card-gradient p-6 md:p-8 space-y-4">
-        <h2 className="text-xl font-semibold">Full details</h2>
-        <p className="text-muted-foreground leading-relaxed">{c.long_description}</p>
-        <div className="pt-2">
-          <div className="text-sm font-medium mb-2">Key points</div>
-          <ul className="space-y-2">
-            {c.key_points?.map((k, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="h-4 w-4 text-[color:var(--success)] mt-0.5 shrink-0" />
-                <span>{k}</span>
-              </li>
-            ))}
-          </ul>
+      <div className="grid lg:grid-cols-[1fr_300px] gap-6 mt-8">
+        <div className="space-y-6">
+          <section className="rounded-2xl ring-gradient bg-card-gradient p-6 md:p-8 space-y-4">
+            <h2 className="text-xl font-semibold">Summary of Regulation</h2>
+            <p className="text-muted-foreground leading-relaxed">{c.long_description}</p>
+          </section>
+
+          <section className="rounded-2xl bg-background/60 border border-border p-6 md:p-8 space-y-4">
+            <h2 className="text-xl font-semibold">Implications & Other Details</h2>
+            <div className="space-y-3">
+              {c.key_points?.map((k, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-[color:var(--primary)] shrink-0 mt-0.5" />
+                  <span className="text-sm text-foreground/90 leading-relaxed">{k}</span>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
+
+        <aside className="space-y-6">
+          <div className="rounded-2xl bg-[color:var(--danger)]/5 border border-[color:var(--danger)]/20 p-6 space-y-3">
+            <div className="text-[10px] uppercase tracking-widest text-[color:var(--danger)]/80 font-bold">Who is Affected</div>
+            <div className="text-sm font-medium leading-relaxed">{c.impact}</div>
+          </div>
+
+          <div className="rounded-2xl bg-[color:var(--warning)]/5 border border-[color:var(--warning)]/20 p-6 space-y-3">
+            <div className="text-[10px] uppercase tracking-widest text-[color:var(--warning)]/80 font-bold">Possible Risks</div>
+            <div className="text-sm text-muted-foreground leading-relaxed">
+              {c.status === "urgent" || c.status === "warning" ?
+                "High risk of workflow disruption. Immediate compliance verification required to prevent visa processing delays." :
+                "Standard operational risk. Ensure internal HR and mobility pipelines are updated to reflect the new criteria."}
+            </div>
+          </div>
+        </aside>
+      </div>
 
       <section className="mt-6 rounded-2xl border border-border bg-background/50 p-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
