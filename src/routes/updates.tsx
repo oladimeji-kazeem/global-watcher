@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Filter, X, Calendar, ArrowUpRight, ArrowUpDown, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -50,7 +50,7 @@ const SORT_OPTIONS: [Search["sort"], string][] = [
 function UpdatesDatabase() {
   const { changes, options: { countries: allCountries, visaTypes: allVisaTypes, statuses: allStatuses } } = Route.useLoaderData();
   const search = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const navigate = useNavigate();
   const [localQ, setLocalQ] = useState(search.q);
 
   // Any filter/search/sort change resets page to 1; page changes preserve everything else.
@@ -161,7 +161,7 @@ function UpdatesDatabase() {
                   onClick={() => navigate({ to: "/updates/$id", params: { id: c.id } })}
                   className="grid grid-cols-1 lg:grid-cols-[1.6fr_1.2fr_0.9fr_0.9fr_0.6fr_auto] gap-3 lg:gap-4 px-5 py-4 items-start lg:items-center hover:bg-background/40 transition cursor-pointer">
                   <div className="min-w-0">
-                    <Link to="/updates/$id" params={{ id: c.id }} className="block group">
+                    <Link to="/updates/$id" params={{ id: c.id }} onClick={(e) => e.stopPropagation()} className="block group">
                       <div className="font-medium text-sm truncate group-hover:text-[color:var(--primary)] transition">{c.title}</div>
                       <div className="text-xs text-muted-foreground truncate">{c.description}</div>
                     </Link>

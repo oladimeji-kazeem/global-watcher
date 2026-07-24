@@ -58,8 +58,8 @@ export function SiteHeader() {
     <header className="relative z-10 border-b border-border/50 backdrop-blur-xl bg-background/40">
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="relative h-9 w-9 rounded-xl bg-hero-gradient grid place-items-center glow-cyan">
-            <Radar className="h-5 w-5 text-white" />
+          <div className="relative h-10 w-10 overflow-hidden">
+            <img src="/logo.png" alt="Immigration Radar Logo" className="h-full w-full object-contain" />
           </div>
           <div className="leading-tight">
             <div className="font-display font-semibold tracking-tight">Immigration Radar</div>
@@ -107,9 +107,9 @@ export function SiteFooter() {
     <footer className="relative border-t border-border/50 backdrop-blur-xl bg-background/40 mt-24">
       <div className="mx-auto max-w-7xl px-6 py-10 grid md:grid-cols-3 gap-6 items-start text-sm">
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-lg bg-hero-gradient grid place-items-center"><Radar className="h-4 w-4 text-white" /></div>
-            <span className="font-display font-semibold">Immigration Radar</span>
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="Logo" className="h-8 w-8 object-contain" />
+            <span className="font-display font-semibold text-lg">Immigration Radar</span>
           </div>
           <p className="text-muted-foreground text-xs max-w-xs leading-relaxed">
             This is just information sourced from various countries' sites and portals. We are neither immigration consultants nor an immigration law firm. All information provided is for general guidance only and should not be taken as legal advice.
