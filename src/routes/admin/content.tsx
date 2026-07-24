@@ -27,7 +27,7 @@ function AdminContentManager() {
         if (!window.confirm("Are you sure you want to permanently delete this record? This action cannot be undone.")) return;
 
         setIsDeleting(id);
-        const { error } = await supabase.from('immigration_changes').delete().eq('id', id);
+        const { error } = await (supabase as any).from('immigration_changes').delete().eq('id', id);
 
         if (!error) {
             setChanges(prev => prev.filter(c => c.id !== id));
@@ -107,9 +107,9 @@ function AdminContentManager() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider ${c.status === 'urgent' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                                                c.status === 'warning' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
-                                                    c.status === 'approved' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                                                        'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                            c.status === 'warning' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                                                c.status === 'approved' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                                    'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                                             }`}>
                                             {c.status}
                                         </span>

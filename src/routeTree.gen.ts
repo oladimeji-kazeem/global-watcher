@@ -13,14 +13,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as CountriesRouteImport } from './routes/countries'
 import { Route as TimelineRouteImport } from './routes/timeline'
-import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as VisaCategoriesRouteImport } from './routes/visa-categories'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminContentRouteImport } from './routes/admin/content'
+import { Route as CountriesIndexRouteImport } from './routes/countries.index'
+import { Route as CountriesCodeRouteImport } from './routes/countries.$code'
+import { Route as UpdatesIndexRouteImport } from './routes/updates.index'
 import { Route as UpdatesIdRouteImport } from './routes/updates.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -42,19 +43,9 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CountriesRoute = CountriesRouteImport.update({
-  id: '/countries',
-  path: '/countries',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TimelineRoute = TimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UpdatesRoute = UpdatesRouteImport.update({
-  id: '/updates',
-  path: '/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VisaCategoriesRoute = VisaCategoriesRouteImport.update({
@@ -82,38 +73,55 @@ const AdminContentRoute = AdminContentRouteImport.update({
   path: '/content',
   getParentRoute: () => AdminRoute,
 } as any)
+const CountriesIndexRoute = CountriesIndexRouteImport.update({
+  id: '/countries/',
+  path: '/countries/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountriesCodeRoute = CountriesCodeRouteImport.update({
+  id: '/countries/$code',
+  path: '/countries/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatesIndexRoute = UpdatesIndexRouteImport.update({
+  id: '/updates/',
+  path: '/updates/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UpdatesIdRoute = UpdatesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => UpdatesRoute,
+  id: '/updates/$id',
+  path: '/updates/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/countries': typeof CountriesRoute
   '/timeline': typeof TimelineRoute
-  '/updates': typeof UpdatesRouteWithChildren
   '/visa-categories': typeof VisaCategoriesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/countries/$code': typeof CountriesCodeRoute
   '/updates/$id': typeof UpdatesIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/countries/': typeof CountriesIndexRoute
+  '/updates/': typeof UpdatesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/countries': typeof CountriesRoute
   '/timeline': typeof TimelineRoute
-  '/updates': typeof UpdatesRouteWithChildren
   '/visa-categories': typeof VisaCategoriesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/countries/$code': typeof CountriesCodeRoute
   '/updates/$id': typeof UpdatesIdRoute
   '/admin': typeof AdminIndexRoute
+  '/countries': typeof CountriesIndexRoute
+  '/updates': typeof UpdatesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -121,15 +129,16 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
-  '/countries': typeof CountriesRoute
   '/timeline': typeof TimelineRoute
-  '/updates': typeof UpdatesRouteWithChildren
   '/visa-categories': typeof VisaCategoriesRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/countries/$code': typeof CountriesCodeRoute
   '/updates/$id': typeof UpdatesIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/countries/': typeof CountriesIndexRoute
+  '/updates/': typeof UpdatesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,43 +146,46 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
-    | '/countries'
     | '/timeline'
-    | '/updates'
     | '/visa-categories'
     | '/profile'
     | '/watchlist'
     | '/admin/content'
+    | '/countries/$code'
     | '/updates/$id'
     | '/admin/'
+    | '/countries/'
+    | '/updates/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/countries'
     | '/timeline'
-    | '/updates'
     | '/visa-categories'
     | '/profile'
     | '/watchlist'
     | '/admin/content'
+    | '/countries/$code'
     | '/updates/$id'
     | '/admin'
+    | '/countries'
+    | '/updates'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/admin'
     | '/auth'
-    | '/countries'
     | '/timeline'
-    | '/updates'
     | '/visa-categories'
     | '/_authenticated/profile'
     | '/_authenticated/watchlist'
     | '/admin/content'
+    | '/countries/$code'
     | '/updates/$id'
     | '/admin/'
+    | '/countries/'
+    | '/updates/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -181,10 +193,12 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
-  CountriesRoute: typeof CountriesRoute
   TimelineRoute: typeof TimelineRoute
-  UpdatesRoute: typeof UpdatesRouteWithChildren
   VisaCategoriesRoute: typeof VisaCategoriesRoute
+  CountriesCodeRoute: typeof CountriesCodeRoute
+  UpdatesIdRoute: typeof UpdatesIdRoute
+  CountriesIndexRoute: typeof CountriesIndexRoute
+  UpdatesIndexRoute: typeof UpdatesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -217,25 +231,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/countries': {
-      id: '/countries'
-      path: '/countries'
-      fullPath: '/countries'
-      preLoaderRoute: typeof CountriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/timeline': {
       id: '/timeline'
       path: '/timeline'
       fullPath: '/timeline'
       preLoaderRoute: typeof TimelineRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/updates': {
-      id: '/updates'
-      path: '/updates'
-      fullPath: '/updates'
-      preLoaderRoute: typeof UpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/visa-categories': {
@@ -273,12 +273,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContentRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/countries/': {
+      id: '/countries/'
+      path: '/countries'
+      fullPath: '/countries/'
+      preLoaderRoute: typeof CountriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/countries/$code': {
+      id: '/countries/$code'
+      path: '/countries/$code'
+      fullPath: '/countries/$code'
+      preLoaderRoute: typeof CountriesCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/updates/': {
+      id: '/updates/'
+      path: '/updates'
+      fullPath: '/updates/'
+      preLoaderRoute: typeof UpdatesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/updates/$id': {
       id: '/updates/$id'
-      path: '/$id'
+      path: '/updates/$id'
       fullPath: '/updates/$id'
       preLoaderRoute: typeof UpdatesIdRouteImport
-      parentRoute: typeof UpdatesRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -308,26 +329,17 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface UpdatesRouteChildren {
-  UpdatesIdRoute: typeof UpdatesIdRoute
-}
-
-const UpdatesRouteChildren: UpdatesRouteChildren = {
-  UpdatesIdRoute: UpdatesIdRoute,
-}
-
-const UpdatesRouteWithChildren =
-  UpdatesRoute._addFileChildren(UpdatesRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
-  CountriesRoute: CountriesRoute,
   TimelineRoute: TimelineRoute,
-  UpdatesRoute: UpdatesRouteWithChildren,
   VisaCategoriesRoute: VisaCategoriesRoute,
+  CountriesCodeRoute: CountriesCodeRoute,
+  UpdatesIdRoute: UpdatesIdRoute,
+  CountriesIndexRoute: CountriesIndexRoute,
+  UpdatesIndexRoute: UpdatesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

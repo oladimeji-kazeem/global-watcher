@@ -42,7 +42,7 @@ export interface TimelineEvent {
 }
 
 export async function fetchChanges(): Promise<ImmigrationChange[]> {
-    const { data, error } = await supabase.from("immigration_changes").select("*").order("effective_date", { ascending: false });
+    const { data, error } = await (supabase as any).from("immigration_changes").select("*").order("effective_date", { ascending: false });
     if (error) {
         console.error("Error fetching immigration changes:", error);
         return [];
@@ -51,7 +51,7 @@ export async function fetchChanges(): Promise<ImmigrationChange[]> {
 }
 
 export async function fetchChangeById(id: string): Promise<ImmigrationChange | null> {
-    const { data, error } = await supabase.from("immigration_changes").select("*").eq("id", id).single();
+    const { data, error } = await (supabase as any).from("immigration_changes").select("*").eq("id", id).single();
     if (error) {
         console.error("Error fetching immigration change:", error);
         return null;
@@ -60,7 +60,7 @@ export async function fetchChangeById(id: string): Promise<ImmigrationChange | n
 }
 
 export async function fetchCountries(): Promise<Country[]> {
-    const { data, error } = await supabase.from("countries").select("*").order("name", { ascending: true });
+    const { data, error } = await (supabase as any).from("countries").select("*").order("name", { ascending: true });
     if (error) {
         console.error("Error fetching countries:", error);
         return [];
@@ -69,7 +69,7 @@ export async function fetchCountries(): Promise<Country[]> {
 }
 
 export async function fetchTimeline(): Promise<TimelineEvent[]> {
-    const { data, error } = await supabase.from("timelines").select("*").order("year", { ascending: true });
+    const { data, error } = await (supabase as any).from("timelines").select("*").order("year", { ascending: true });
     if (error) {
         console.error("Error fetching timelines:", error);
         return [];

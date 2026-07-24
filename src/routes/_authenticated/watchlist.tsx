@@ -107,12 +107,12 @@ function WatchlistPage() {
               </div>
               <div className="flex flex-wrap gap-2">
                 {countries.map((c) => {
-                  const on = prefs.countries.includes(c.name);
+                  const on = prefs.countries.includes(c as unknown as string);
                   return (
-                    <button key={c.code} type="button" onClick={() => toggle("countries", c.name)}
+                    <button key={c as unknown as string} type="button" onClick={() => toggle("countries", c as unknown as string)}
                       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${on ? "border-[color:var(--primary)]/50 bg-[color:var(--primary)]/10 text-foreground glow-cyan" : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
                         }`}>
-                      <span>{c.flag}</span>{c.name}
+                      {c as unknown as string}
                     </button>
                   );
                 })}

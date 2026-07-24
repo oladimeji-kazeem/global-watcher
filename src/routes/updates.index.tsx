@@ -25,7 +25,7 @@ const searchSchema = z.object({
 
 type Search = z.infer<typeof searchSchema>;
 
-export const Route = createFileRoute("/updates")({
+export const Route = createFileRoute("/updates/")({
   validateSearch: zodValidator(searchSchema),
   loader: async () => {
     const [changes, options] = await Promise.all([fetchChanges(), getFilterOptions()]);
