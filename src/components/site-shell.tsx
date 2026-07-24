@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Radar, ArrowUpRight, Bell, LogIn, LogOut, User as UserIcon, FileText, Globe, Clock, Shield } from "lucide-react";
+import { Radar, ArrowUpRight, Bell, LogIn, LogOut, User as UserIcon, FileText, Globe, Clock, Shield, Sparkles, Calculator, Target, ShieldAlert, Scale } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -172,14 +172,33 @@ export function PageHeader({ eyebrow, title, description, action }: { eyebrow: s
 export { ArrowUpRight };
 
 export function AppSidebarLayout({ children }: { children: ReactNode }) {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setIsAdmin(data.session?.user.email === "olakazeem@outlook.com");
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAdmin(session?.user.email === "olakazeem@outlook.com");
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   const sideNav: any[] = [
     { to: "/updates", label: "Database", icon: FileText },
     { to: "/countries", label: "Countries", icon: Globe },
     { to: "/timeline", label: "Timeline", icon: Clock },
     { to: "/visa-categories", label: "Visa Categories", icon: Shield },
+    { to: "/eligibility", label: "Eligibility Predictor", icon: Sparkles },
+    { to: "/calculator", label: "Cost Simulator", icon: Calculator },
+    { to: "/compare", label: "What-If Comparison", icon: Scale },
     { to: "/watchlist", label: "Watchlist", icon: Bell },
     { to: "/profile", label: "My Profile", icon: UserIcon },
   ];
+
+  if (isAdmin) {
+    sideNav.push({ to: "/admin", label: "Command Center", icon: ShieldAlert });
+  }
 
   return (
     <div className="flex flex-col md:flex-row relative z-0">

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useLocation, redirect } from '@tanstack/react-router'
-import { LayoutDashboard, Database, ShieldAlert, ArrowLeft } from 'lucide-react'
+import { LayoutDashboard, Database, ShieldAlert, ArrowLeft, Users } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 
 export const Route = createFileRoute('/admin')({
@@ -33,6 +33,13 @@ function AdminLayout() {
                 className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition group relative overflow-hidden ${pathname === '/admin' ? 'bg-[color:var(--primary)]/10 text-[color:var(--primary)] border-[color:var(--primary)]/30 glow-cyan' : 'border-transparent text-muted-foreground hover:bg-white/[0.02] hover:text-white'}`}
               >
                 <LayoutDashboard className="h-4 w-4" /> Analytics Engine
+              </Link>
+
+              <Link
+                to="/admin/users"
+                className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition group relative overflow-hidden ${pathname === '/admin/users' ? 'bg-purple-500/10 text-purple-400 border-purple-500/30' : 'border-transparent text-muted-foreground hover:bg-white/[0.02] hover:text-white'}`}
+              >
+                <Users className="h-4 w-4" /> User Management
               </Link>
 
               <Link

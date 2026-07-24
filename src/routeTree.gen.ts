@@ -13,12 +13,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CalculatorRouteImport } from './routes/calculator'
+import { Route as CompareRouteImport } from './routes/compare'
+import { Route as EligibilityRouteImport } from './routes/eligibility'
 import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as VisaCategoriesRouteImport } from './routes/visa-categories'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminContentRouteImport } from './routes/admin/content'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as CountriesIndexRouteImport } from './routes/countries.index'
 import { Route as CountriesCodeRouteImport } from './routes/countries.$code'
 import { Route as UpdatesIndexRouteImport } from './routes/updates.index'
@@ -41,6 +45,21 @@ const AdminRoute = AdminRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CalculatorRoute = CalculatorRouteImport.update({
+  id: '/calculator',
+  path: '/calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EligibilityRoute = EligibilityRouteImport.update({
+  id: '/eligibility',
+  path: '/eligibility',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TimelineRoute = TimelineRouteImport.update({
@@ -73,6 +92,11 @@ const AdminContentRoute = AdminContentRouteImport.update({
   path: '/content',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const CountriesIndexRoute = CountriesIndexRouteImport.update({
   id: '/countries/',
   path: '/countries/',
@@ -98,11 +122,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/calculator': typeof CalculatorRoute
+  '/compare': typeof CompareRoute
+  '/eligibility': typeof EligibilityRoute
   '/timeline': typeof TimelineRoute
   '/visa-categories': typeof VisaCategoriesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/users': typeof AdminUsersRoute
   '/countries/$code': typeof CountriesCodeRoute
   '/updates/$id': typeof UpdatesIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -112,11 +140,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/calculator': typeof CalculatorRoute
+  '/compare': typeof CompareRoute
+  '/eligibility': typeof EligibilityRoute
   '/timeline': typeof TimelineRoute
   '/visa-categories': typeof VisaCategoriesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/users': typeof AdminUsersRoute
   '/countries/$code': typeof CountriesCodeRoute
   '/updates/$id': typeof UpdatesIdRoute
   '/admin': typeof AdminIndexRoute
@@ -129,11 +161,15 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
+  '/calculator': typeof CalculatorRoute
+  '/compare': typeof CompareRoute
+  '/eligibility': typeof EligibilityRoute
   '/timeline': typeof TimelineRoute
   '/visa-categories': typeof VisaCategoriesRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/users': typeof AdminUsersRoute
   '/countries/$code': typeof CountriesCodeRoute
   '/updates/$id': typeof UpdatesIdRoute
   '/admin/': typeof AdminIndexRoute
@@ -146,11 +182,15 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/auth'
+    | '/calculator'
+    | '/compare'
+    | '/eligibility'
     | '/timeline'
     | '/visa-categories'
     | '/profile'
     | '/watchlist'
     | '/admin/content'
+    | '/admin/users'
     | '/countries/$code'
     | '/updates/$id'
     | '/admin/'
@@ -160,11 +200,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/calculator'
+    | '/compare'
+    | '/eligibility'
     | '/timeline'
     | '/visa-categories'
     | '/profile'
     | '/watchlist'
     | '/admin/content'
+    | '/admin/users'
     | '/countries/$code'
     | '/updates/$id'
     | '/admin'
@@ -176,11 +220,15 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/admin'
     | '/auth'
+    | '/calculator'
+    | '/compare'
+    | '/eligibility'
     | '/timeline'
     | '/visa-categories'
     | '/_authenticated/profile'
     | '/_authenticated/watchlist'
     | '/admin/content'
+    | '/admin/users'
     | '/countries/$code'
     | '/updates/$id'
     | '/admin/'
@@ -193,6 +241,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CalculatorRoute: typeof CalculatorRoute
+  CompareRoute: typeof CompareRoute
+  EligibilityRoute: typeof EligibilityRoute
   TimelineRoute: typeof TimelineRoute
   VisaCategoriesRoute: typeof VisaCategoriesRoute
   CountriesCodeRoute: typeof CountriesCodeRoute
@@ -229,6 +280,27 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calculator': {
+      id: '/calculator'
+      path: '/calculator'
+      fullPath: '/calculator'
+      preLoaderRoute: typeof CalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eligibility': {
+      id: '/eligibility'
+      path: '/eligibility'
+      fullPath: '/eligibility'
+      preLoaderRoute: typeof EligibilityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/timeline': {
@@ -271,6 +343,13 @@ declare module '@tanstack/react-router' {
       path: '/content'
       fullPath: '/admin/content'
       preLoaderRoute: typeof AdminContentRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
     '/countries/': {
@@ -319,11 +398,13 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminContentRoute: typeof AdminContentRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminContentRoute: AdminContentRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -334,6 +415,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
+  CalculatorRoute: CalculatorRoute,
+  CompareRoute: CompareRoute,
+  EligibilityRoute: EligibilityRoute,
   TimelineRoute: TimelineRoute,
   VisaCategoriesRoute: VisaCategoriesRoute,
   CountriesCodeRoute: CountriesCodeRoute,

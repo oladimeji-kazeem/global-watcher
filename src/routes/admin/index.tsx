@@ -12,6 +12,24 @@ export const Route = createFileRoute("/admin/")({
     component: AdminAnalyticsDashboard
 });
 
+const monthlyTraffic = [
+    { name: 'Feb', visits: 12400, organic: 8200 },
+    { name: 'Mar', visits: 18500, organic: 11000 },
+    { name: 'Apr', visits: 24800, organic: 16500 },
+    { name: 'May', visits: 39600, organic: 28400 },
+    { name: 'Jun', visits: 52400, organic: 39100 },
+    { name: 'Jul', visits: 81500, organic: 62400 },
+];
+
+const jurisdictionViews = [
+    { name: 'United Kingdom', views: 32400 },
+    { name: 'Canada', views: 25100 },
+    { name: 'United States', views: 18200 },
+    { name: 'Australia', views: 14500 },
+    { name: 'Germany', views: 9800 },
+    { name: 'Ireland', views: 4200 }
+];
+
 const COLORS = ['#2DA099', '#3b82f6', '#8b5cf6', '#eab308', '#ec4899', '#14b8a6', '#f97316', '#64748b'];
 
 function AdminAnalyticsDashboard() {
@@ -96,33 +114,39 @@ function AdminAnalyticsDashboard() {
                 })}
             </div>
 
-            {/* Charts Row 1 */}
+            {/* Charts Row 1 (Database) */}
             <div className="grid lg:grid-cols-3 gap-6">
 
                 {/* Main Traffic Chart */}
                 <div className="lg:col-span-2 rounded-xl border border-border/50 bg-card/40 backdrop-blur-md p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h3 className="text-lg font-semibold text-white">Database Growth</h3>
-                            <p className="text-xs text-muted-foreground mt-1">Immigration rules and updates integrated over the trailing 6 months</p>
+                            <h3 className="text-lg font-semibold text-white">Platform Traffic Trend</h3>
+                            <p className="text-xs text-muted-foreground mt-1">Total visits vs organic active sessions</p>
                         </div>
                         <div className="flex items-center gap-4 text-xs font-semibold">
-                            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue-500" /> Legal Updates</div>
+                            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue-500" /> Total Visits</div>
+                            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[color:var(--primary)]" /> Organic SEO</div>
                         </div>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={monthlyUpdates} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <AreaChart data={monthlyTraffic} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
-                                    <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
+                                    <linearGradient id="colorVisits2" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorOrganic" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#2DA099" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#2DA099" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <XAxis dataKey="name" stroke="#525252" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="#525252" fontSize={12} tickLine={false} axisLine={false} width={40} />
+                                <YAxis stroke="#525252" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                                 <RechartsTooltip contentStyle={{ backgroundColor: '#09090b', borderRadius: '8px', border: '1px solid #27272a' }} itemStyle={{ color: '#fff' }} />
-                                <Area type="step" dataKey="updates" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorVisits)" />
+                                <Area type="monotone" dataKey="visits" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorVisits2)" />
+                                <Area type="monotone" dataKey="organic" stroke="#2DA099" strokeWidth={2} fillOpacity={1} fill="url(#colorOrganic)" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -158,13 +182,13 @@ function AdminAnalyticsDashboard() {
             </div>
 
             {/* Chart Row 2 */}
-            <div className="grid lg:grid-cols-2 gap-6 pb-12">
+            <div className="grid lg:grid-cols-2 gap-6 pb-6">
                 <div className="rounded-xl border border-border/50 bg-card/40 backdrop-blur-md p-6">
-                    <h3 className="text-lg font-semibold text-white">Updates by Jurisdiction</h3>
-                    <p className="text-xs text-muted-foreground mt-1 mb-6">Database volume spread dynamically across monitored countries</p>
+                    <h3 className="text-lg font-semibold text-white">Countries of View (Traffic)</h3>
+                    <p className="text-xs text-muted-foreground mt-1 mb-6">SEO volume distributed dynamically across global jurisdictions</p>
                     <div className="h-[250px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={jurisdictionTraffic} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                            <BarChart data={jurisdictionViews} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
                                 <XAxis type="number" hide />
                                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} stroke="#a1a1aa" fontSize={12} width={100} />
                                 <RechartsTooltip cursor={{ fill: '#f4f4f5', opacity: 0.05 }} contentStyle={{ backgroundColor: '#09090b', borderRadius: '8px', border: '1px solid #27272a' }} />
@@ -174,20 +198,19 @@ function AdminAnalyticsDashboard() {
                     </div>
                 </div>
 
-                <div className="rounded-xl border border-[color:var(--primary)]/30 bg-card/40 backdrop-blur-md p-6 flex flex-col justify-center items-start overflow-hidden relative group">
-                    <div className="absolute -right-20 -top-20 opacity-[0.03] group-hover:opacity-[0.05] transition duration-700">
-                        <ShieldCheck className="w-[300px] h-[300px]" />
+                <div className="rounded-xl border border-border/50 bg-card/40 backdrop-blur-md p-6">
+                    <h3 className="text-lg font-semibold text-white">Internal Database Updates</h3>
+                    <p className="text-xs text-muted-foreground mt-1 mb-6">Volume of recorded visa framework changes by region</p>
+                    <div className="h-[250px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={jurisdictionTraffic} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                                <XAxis type="number" hide />
+                                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} stroke="#a1a1aa" fontSize={12} width={100} />
+                                <RechartsTooltip cursor={{ fill: '#f4f4f5', opacity: 0.05 }} contentStyle={{ backgroundColor: '#09090b', borderRadius: '8px', border: '1px solid #27272a' }} />
+                                <Bar dataKey="views" fill="#2DA099" radius={[0, 4, 4, 0]} barSize={24} />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
-                    <div className="inline-flex items-center justify-center rounded-xl bg-[color:var(--primary)]/10 p-3 mb-6">
-                        <ShieldCheck className="h-6 w-6 text-[color:var(--primary)]" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">Global Routing Health: <span className="text-[color:var(--primary)] text-gradient">Excellent</span></h3>
-                    <p className="text-sm text-foreground/80 leading-relaxed max-w-sm mb-6">
-                        Platform data pipelines, Supabase active synchronization, and server-side renders are operating optimally. All webhooks and background CRON services are secure.
-                    </p>
-                    <button className="px-6 py-2.5 rounded-lg border border-border/60 hover:bg-white/5 transition text-sm font-semibold text-white flex items-center gap-2 relative z-10">
-                        Generate Diagnostic Report <ArrowUpRight className="h-3 w-3" />
-                    </button>
                 </div>
             </div>
 
