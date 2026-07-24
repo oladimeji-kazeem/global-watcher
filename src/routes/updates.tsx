@@ -4,9 +4,9 @@ import { Search, Filter, X, Calendar, ArrowUpRight, ArrowUpDown, ChevronLeft, Ch
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import {
-  changes, statusStyles, formatDate,
-  allCountries, allVisaTypes, allStatuses, type ChangeStatus,
-} from "@/lib/immigration-data";
+  statusStyles, formatDate, type ChangeStatus,
+  fetchChanges, getFilterOptions,
+} from "@/lib/data-service";
 import { PageHeader } from "@/components/site-shell";
 
 const PAGE_SIZE = 10;
@@ -27,6 +27,10 @@ type Search = z.infer<typeof searchSchema>;
 
 export const Route = createFileRoute("/updates")({
   validateSearch: zodValidator(searchSchema),
+  loader: async () => {
+    const [changes, options] = await Promise.all([fetchChanges(), getFilterOptions()]);
+    return { changes, options };
+  },
   head: () => ({
     meta: [
       { title: "Immigration Changes Database — Immigration Radar" },
@@ -44,6 +48,7 @@ const SORT_OPTIONS: [Search["sort"], string][] = [
 ];
 
 function UpdatesDatabase() {
+  const { changes, options: { countries: allCountries, visaTypes: allVisaTypes, statuses: allStatuses } } = Route.useLoaderData();
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const [localQ, setLocalQ] = useState(search.q);

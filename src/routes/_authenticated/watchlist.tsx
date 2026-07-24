@@ -1,13 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Bell, Check, Info, Mail, Radar, Sparkles } from "lucide-react";
-import {
-  changes, countries, allVisaTypes, allStatuses, statusStyles,
-  formatDate, type ChangeStatus,
-} from "@/lib/immigration-data";
+import { statusStyles, formatDate, type ChangeStatus, fetchChanges, getFilterOptions } from "@/lib/data-service";
 import { PageHeader } from "@/components/site-shell";
 
 export const Route = createFileRoute("/_authenticated/watchlist")({
+  loader: async () => {
+    const [changes, options] = await Promise.all([fetchChanges(), getFilterOptions()]);
+    return { changes, options };
+  },
   head: () => ({
     meta: [
       { title: "My Watchlist — Immigration Radar" },
@@ -44,6 +45,7 @@ function loadPrefs(): Preferences {
 }
 
 function WatchlistPage() {
+  const { changes, options: { countries, visaTypes: allVisaTypes, statuses: allStatuses } } = Route.useLoaderData();
   const [prefs, setPrefs] = useState<Preferences>(DEFAULTS);
   const [saved, setSaved] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -61,11 +63,11 @@ function WatchlistPage() {
   const matches = useMemo(() => {
     return changes.filter((c) => {
       if (prefs.countries.length && !prefs.countries.includes(c.country)) return false;
-      if (prefs.visaTypes.length && !prefs.visaTypes.includes(c.visaType)) return false;
+      if (prefs.visaTypes.length && !prefs.visaTypes.includes(c.visa_type)) return false;
       if (prefs.statuses.length && !prefs.statuses.includes(c.status)) return false;
       return true;
     });
-  }, [prefs]);
+  }, [prefs, changes]);
 
   const save = (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,9 +109,8 @@ function WatchlistPage() {
                 const on = prefs.countries.includes(c.name);
                 return (
                   <button key={c.code} type="button" onClick={() => toggle("countries", c.name)}
-                    className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
-                      on ? "border-[color:var(--primary)]/50 bg-[color:var(--primary)]/10 text-foreground glow-cyan" : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
-                    }`}>
+                    className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${on ? "border-[color:var(--primary)]/50 bg-[color:var(--primary)]/10 text-foreground glow-cyan" : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
+                      }`}>
                     <span>{c.flag}</span>{c.name}
                   </button>
                 );
@@ -128,9 +129,8 @@ function WatchlistPage() {
                 const on = prefs.visaTypes.includes(v);
                 return (
                   <button key={v} type="button" onClick={() => toggle("visaTypes", v)}
-                    className={`rounded-full border px-3 py-1.5 text-xs transition ${
-                      on ? "border-[color:var(--accent)]/50 bg-[color:var(--accent)]/10 text-foreground" : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
-                    }`}>{v}</button>
+                    className={`rounded-full border px-3 py-1.5 text-xs transition ${on ? "border-[color:var(--accent)]/50 bg-[color:var(--accent)]/10 text-foreground" : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
+                      }`}>{v}</button>
                 );
               })}
             </div>
@@ -146,9 +146,8 @@ function WatchlistPage() {
                 const on = prefs.statuses.includes(s);
                 return (
                   <button key={s} type="button" onClick={() => toggle("statuses", s)}
-                    className={`rounded-xl border px-3 py-2.5 text-xs flex items-center justify-between transition ${
-                      on ? style.badge : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
-                    }`}>
+                    className={`rounded-xl border px-3 py-2.5 text-xs flex items-center justify-between transition ${on ? style.badge : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
+                      }`}>
                     <span className="flex items-center gap-1.5"><span className={`h-1.5 w-1.5 rounded-full ${style.dot}`} />{style.label}</span>
                     {on && <Check className="h-3.5 w-3.5" />}
                   </button>
@@ -165,9 +164,8 @@ function WatchlistPage() {
                 const on = prefs.frequency === f;
                 return (
                   <button key={f} type="button" onClick={() => setPrefs({ ...prefs, frequency: f })}
-                    className={`rounded-xl border px-3 py-2.5 text-xs capitalize transition ${
-                      on ? "border-[color:var(--primary)]/50 bg-[color:var(--primary)]/10 glow-cyan" : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
-                    }`}>{f}</button>
+                    className={`rounded-xl border px-3 py-2.5 text-xs capitalize transition ${on ? "border-[color:var(--primary)]/50 bg-[color:var(--primary)]/10 glow-cyan" : "border-border bg-background/40 text-muted-foreground hover:text-foreground"
+                      }`}>{f}</button>
                 );
               })}
             </div>
@@ -230,10 +228,10 @@ function WatchlistPage() {
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] ${s.badge}`}>
                         <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} /> {s.label}
                       </span>
-                      <span className="text-[11px] text-muted-foreground">{c.flag} {c.country} · {c.visaType}</span>
+                      <span className="text-[11px] text-muted-foreground">{c.flag} {c.country} · {c.visa_type}</span>
                     </div>
                     <div className="text-sm font-medium">{c.title}</div>
-                    <div className="text-xs text-muted-foreground mt-1">Effective {formatDate(c.effectiveDate)} · Source: {c.sourceName}</div>
+                    <div className="text-xs text-muted-foreground mt-1">Effective {formatDate(c.effective_date)} · Source: {c.source_name}</div>
                   </Link>
                 );
               })}

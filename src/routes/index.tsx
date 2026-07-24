@@ -3,10 +3,14 @@ import {
   Activity, Bell, Globe2, Radar, ShieldCheck, ArrowUpRight,
   Users, AlertTriangle, CheckCircle2, Sparkles, Database,
 } from "lucide-react";
-import { changes, statusStyles, formatDate } from "@/lib/immigration-data";
+import { fetchChanges, statusStyles, formatDate, type ImmigrationChange } from "@/lib/data-service";
 import { ChangeCard } from "@/components/change-card";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const changes = await fetchChanges();
+    return { changes };
+  },
   head: () => ({
     meta: [
       { title: "Immigration Radar — Live Global Immigration Intelligence" },
@@ -17,6 +21,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const { changes } = Route.useLoaderData();
   const latest = changes.slice(0, 3);
   return (
     <main>
@@ -37,7 +42,7 @@ function Dashboard() {
             {latest.map((c) => <ChangeCard key={c.id} change={c} />)}
           </div>
         </section>
-        <WatchlistCTA />
+        <WatchlistCTA changes={changes} />
       </div>
     </main>
   );
@@ -93,7 +98,7 @@ function RadarVisual() {
         <div className="absolute top-0 bottom-0 left-1/2 w-px bg-[color:var(--primary)]/10" />
         <div className="absolute inset-0 animate-radar-sweep origin-center">
           <div className="absolute top-1/2 left-1/2 h-1/2 w-1/2 origin-top-left"
-               style={{ background: "conic-gradient(from 0deg, transparent 0deg, oklch(0.72 0.18 200 / 0.55) 45deg, transparent 90deg)" }} />
+            style={{ background: "conic-gradient(from 0deg, transparent 0deg, oklch(0.72 0.18 200 / 0.55) 45deg, transparent 90deg)" }} />
         </div>
         {[
           { x: "22%", y: "28%", label: "🇬🇧", color: "var(--danger)" },
@@ -142,7 +147,7 @@ function StatsRow() {
   );
 }
 
-function WatchlistCTA() {
+function WatchlistCTA({ changes }: { changes: ImmigrationChange[] }) {
   return (
     <section className="relative overflow-hidden rounded-3xl ring-gradient bg-card-gradient p-10 md:p-14">
       <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-[color:var(--accent)]/30 blur-3xl" />

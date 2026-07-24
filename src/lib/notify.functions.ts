@@ -1,13 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { changes, statusStyles, formatDate } from "@/lib/immigration-data";
+import { statusStyles, formatDate, fetchChangeById } from "@/lib/data-service";
 
 export const notifyWatchlistMatches = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { changeId: string }) => z.object({ changeId: z.string().min(1) }).parse(input))
   .handler(async ({ data }) => {
-    const change = changes.find((c) => c.id === data.changeId);
+    const change = await fetchChangeById(data.changeId);
     if (!change) throw new Error("Change not found");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -19,7 +19,7 @@ export const notifyWatchlistMatches = createServerFn({ method: "POST" })
     const matches = ((rows as any[]) ?? []).filter((r) => {
       if (!r.enabled || !r.email) return false;
       if (r.countries?.length && !r.countries.includes(change.country)) return false;
-      if (r.visa_types?.length && !r.visa_types.includes(change.visaType)) return false;
+      if (r.visa_types?.length && !r.visa_types.includes(change.visa_type)) return false;
       if (r.statuses?.length && !r.statuses.includes(change.status)) return false;
       return true;
     });
@@ -35,18 +35,18 @@ export const notifyWatchlistMatches = createServerFn({ method: "POST" })
     const templateData = {
       title: change.title,
       country: change.country,
-      visaType: change.visaType,
+      visaType: change.visa_type,
       status: statusStyles[change.status].label,
-      effectiveDate: formatDate(change.effectiveDate),
-      previousRule: change.previousRule,
-      newRule: change.newRule,
-      sourceName: change.sourceName,
-      sourceUrl: change.sourceUrl,
+      effectiveDate: formatDate(change.effective_date),
+      previousRule: change.previous_rule,
+      newRule: change.new_rule,
+      sourceName: change.source_name,
+      sourceUrl: change.source_url,
       detailUrl,
     };
     const subject = `New immigration change: ${change.title}`;
     const html = await render(createElement(Email, templateData));
-    const text = `${change.title}\n${change.country} · ${change.visaType} · Effective ${formatDate(change.effectiveDate)}\n\nPrevious rule: ${change.previousRule}\nNew rule: ${change.newRule}\n\nOfficial source (${change.sourceName}): ${change.sourceUrl}\nDetails: ${detailUrl}`;
+    const text = `${change.title}\n${change.country} · ${change.visa_type} · Effective ${formatDate(change.effective_date)}\n\nPrevious rule: ${change.previous_rule}\nNew rule: ${change.new_rule}\n\nOfficial source (${change.source_name}): ${change.source_url}\nDetails: ${detailUrl}`;
 
     const { sendLovableEmail } = await import("@lovable.dev/email-js");
     const apiKey = process.env.LOVABLE_API_KEY;

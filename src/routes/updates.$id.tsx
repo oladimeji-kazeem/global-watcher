@@ -2,14 +2,19 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Calendar, CheckCircle2, ExternalLink, ShieldCheck, Users, Send, Loader2 } from "lucide-react";
-import { changes, statusStyles, formatDate, type ImmigrationChange } from "@/lib/immigration-data";
+import { statusStyles, formatDate, type ImmigrationChange, fetchChangeById, fetchChanges } from "@/lib/data-service";
 import { notifyWatchlistMatches } from "@/lib/notify.functions";
 
 export const Route = createFileRoute("/updates/$id")({
-  loader: ({ params }): { change: ImmigrationChange } => {
-    const change = changes.find((c) => c.id === params.id);
+  loader: async ({ params }): Promise<{ change: ImmigrationChange, related: ImmigrationChange[] }> => {
+    const change = await fetchChangeById(params.id);
     if (!change) throw notFound();
-    return { change };
+
+    // fetch related changes logic manually here instead of all changes
+    const all = await fetchChanges();
+    const related = all.filter((x) => x.country === change.country && x.id !== change.id).slice(0, 3);
+
+    return { change, related };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Change not found — Immigration Radar" }, { name: "robots", content: "noindex" }] };
@@ -34,10 +39,8 @@ export const Route = createFileRoute("/updates/$id")({
 });
 
 function ChangeDetail() {
-  const { change } = Route.useLoaderData() as { change: ImmigrationChange };
-  const c = change;
+  const { change: c, related } = Route.useLoaderData();
   const s = statusStyles[c.status];
-  const related = changes.filter((x) => x.country === c.country && x.id !== c.id).slice(0, 3);
 
   return (
     <main className="mx-auto max-w-5xl px-6 pt-12 pb-24">

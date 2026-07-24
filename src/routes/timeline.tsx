@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { timeline, changes, statusStyles, formatDate } from "@/lib/immigration-data";
+import { fetchTimeline, fetchChanges, statusStyles, formatDate } from "@/lib/data-service";
 import { PageHeader } from "@/components/site-shell";
 
 export const Route = createFileRoute("/timeline")({
+  loader: async () => {
+    const [timeline, changes] = await Promise.all([fetchTimeline(), fetchChanges()]);
+    return { timeline, changes };
+  },
   head: () => ({
     meta: [
       { title: "Immigration Timeline — Immigration Radar" },
@@ -13,8 +17,9 @@ export const Route = createFileRoute("/timeline")({
 });
 
 function TimelinePage() {
+  const { timeline, changes } = Route.useLoaderData();
   // Merge structured yearly timeline with sorted DB entries
-  const sorted = [...changes].sort((a, b) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime());
+  const sorted = [...changes].sort((a, b) => new Date(b.effective_date).getTime() - new Date(a.effective_date).getTime());
   return (
     <main>
       <PageHeader
@@ -56,22 +61,22 @@ function TimelinePage() {
                   </div>
                   <div className="rounded-2xl ring-gradient bg-card-gradient p-5">
                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <span>{formatDate(c.effectiveDate)}</span>
+                      <span>{formatDate(c.effective_date)}</span>
                       <span>·</span>
                       <span>{c.flag} {c.country}</span>
                       <span>·</span>
-                      <span>{c.visaType}</span>
+                      <span>{c.visa_type}</span>
                     </div>
                     <div className="mt-2 font-semibold">{c.title}</div>
                     <div className="text-sm text-muted-foreground mt-1">{c.description}</div>
                     <div className="grid sm:grid-cols-2 gap-2 mt-3">
                       <div className="rounded-lg bg-background/50 border border-border p-2.5 text-xs">
                         <span className="uppercase tracking-widest text-[10px] text-muted-foreground">Was</span>
-                        <div className="line-through decoration-[color:var(--danger)]/60">{c.previousRule}</div>
+                        <div className="line-through decoration-[color:var(--danger)]/60">{c.previous_rule}</div>
                       </div>
                       <div className="rounded-lg bg-[color:var(--primary)]/5 border border-[color:var(--primary)]/25 p-2.5 text-xs">
                         <span className="uppercase tracking-widest text-[10px] text-[color:var(--primary)]">Now</span>
-                        <div className="font-medium">{c.newRule}</div>
+                        <div className="font-medium">{c.new_rule}</div>
                       </div>
                     </div>
                   </div>

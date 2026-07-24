@@ -1,9 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, ExternalLink, TrendingUp } from "lucide-react";
-import { countries } from "@/lib/immigration-data";
+import { fetchCountries } from "@/lib/data-service";
 import { PageHeader } from "@/components/site-shell";
 
 export const Route = createFileRoute("/countries")({
+  loader: async () => {
+    const countries = await fetchCountries();
+    return { countries };
+  },
   head: () => ({
     meta: [
       { title: "Countries Monitored — Immigration Radar" },
@@ -14,6 +18,7 @@ export const Route = createFileRoute("/countries")({
 });
 
 function CountriesPage() {
+  const { countries } = Route.useLoaderData();
   return (
     <main>
       <PageHeader
