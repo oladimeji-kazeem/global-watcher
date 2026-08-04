@@ -131,6 +131,28 @@ export function ChangeForm({
             <textarea name="key_points" rows={3} defaultValue={initialData?.key_points?.join('\n')} className="mt-1 block w-full rounded-md border border-border bg-background p-2 text-sm" />
           </label>
           
+          <div className="pt-4 mt-6 border-t border-border">
+            <h3 className="text-lg font-medium mb-4">Analytics & Insights</h3>
+            <div className="space-y-4">
+              <label className="block">
+                <span className="text-sm font-medium text-[color:var(--info)]">Descriptive Analytics (What happened?)</span>
+                <textarea name="analytic_descriptive" rows={2} defaultValue={initialData?.analytic_descriptive} className="mt-1 block w-full rounded-md border border-border bg-background p-2 text-sm" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium text-[color:var(--warning)]">Diagnostic Analytics (Why did it happen?)</span>
+                <textarea name="analytic_diagnostic" rows={2} defaultValue={initialData?.analytic_diagnostic} className="mt-1 block w-full rounded-md border border-border bg-background p-2 text-sm" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium text-[color:var(--success)]">Predictive Analytics (What will happen next?)</span>
+                <textarea name="analytic_predictive" rows={2} defaultValue={initialData?.analytic_predictive} className="mt-1 block w-full rounded-md border border-border bg-background p-2 text-sm" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium text-[color:var(--primary)]">Prescriptive Analytics (What should I do?)</span>
+                <textarea name="analytic_prescriptive" rows={2} defaultValue={initialData?.analytic_prescriptive} className="mt-1 block w-full rounded-md border border-border bg-background p-2 text-sm" />
+              </label>
+            </div>
+          </div>
+          
           <div className="flex justify-end gap-3 pt-4 border-t border-border mt-6">
             <button type="button" onClick={onClose} className="px-4 py-2 text-sm rounded-md border border-border hover:bg-white/5 transition">Cancel</button>
             <button type="submit" disabled={busy} className="px-4 py-2 text-sm rounded-md bg-[color:var(--primary)] text-black font-semibold hover:opacity-90 transition disabled:opacity-50">

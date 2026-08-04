@@ -39,6 +39,10 @@ CREATE TABLE IF NOT EXISTS public.immigration_changes (
   impact TEXT NOT NULL,
   reviewed_by TEXT NOT NULL,
   key_points TEXT[] NOT NULL DEFAULT '{}',
+  analytic_descriptive TEXT,
+  analytic_diagnostic TEXT,
+  analytic_predictive TEXT,
+  analytic_prescriptive TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -144,3 +148,10 @@ INSERT INTO public.admin_users (email) VALUES
 ('olakazeem@outlook.com'),
 ('olakazeem@gmail.com')
 ON CONFLICT (email) DO NOTHING;
+
+-- Schema additions for Analytics
+ALTER TABLE public.immigration_changes ADD COLUMN IF NOT EXISTS analytic_descriptive TEXT;
+ALTER TABLE public.immigration_changes ADD COLUMN IF NOT EXISTS analytic_diagnostic TEXT;
+ALTER TABLE public.immigration_changes ADD COLUMN IF NOT EXISTS analytic_predictive TEXT;
+ALTER TABLE public.immigration_changes ADD COLUMN IF NOT EXISTS analytic_prescriptive TEXT;
+

@@ -105,6 +105,14 @@ function AuthPage() {
             </div>
           </label>
 
+          {mode === "signin" && (
+            <div className="flex justify-end">
+              <Link to="/reset-password" className="text-xs text-[color:var(--primary)] hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+          )}
+
           {err && <div className="text-sm text-[color:var(--danger)] bg-[color:var(--danger)]/10 border border-[color:var(--danger)]/30 rounded-lg px-3 py-2">{err}</div>}
 
           <button type="submit" disabled={busy}

@@ -16,7 +16,9 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CalculatorRouteImport } from './routes/calculator'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as EligibilityRouteImport } from './routes/eligibility'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as VisaCategoriesRouteImport } from './routes/visa-categories'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
@@ -62,9 +64,19 @@ const EligibilityRoute = EligibilityRouteImport.update({
   path: '/eligibility',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TimelineRoute = TimelineRouteImport.update({
   id: '/timeline',
   path: '/timeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
+  id: '/update-password',
+  path: '/update-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VisaCategoriesRoute = VisaCategoriesRouteImport.update({
@@ -125,7 +137,9 @@ export interface FileRoutesByFullPath {
   '/calculator': typeof CalculatorRoute
   '/compare': typeof CompareRoute
   '/eligibility': typeof EligibilityRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/timeline': typeof TimelineRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/visa-categories': typeof VisaCategoriesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
@@ -143,7 +157,9 @@ export interface FileRoutesByTo {
   '/calculator': typeof CalculatorRoute
   '/compare': typeof CompareRoute
   '/eligibility': typeof EligibilityRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/timeline': typeof TimelineRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/visa-categories': typeof VisaCategoriesRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
@@ -164,7 +180,9 @@ export interface FileRoutesById {
   '/calculator': typeof CalculatorRoute
   '/compare': typeof CompareRoute
   '/eligibility': typeof EligibilityRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/timeline': typeof TimelineRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/visa-categories': typeof VisaCategoriesRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
@@ -185,7 +203,9 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/compare'
     | '/eligibility'
+    | '/reset-password'
     | '/timeline'
+    | '/update-password'
     | '/visa-categories'
     | '/profile'
     | '/watchlist'
@@ -203,7 +223,9 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/compare'
     | '/eligibility'
+    | '/reset-password'
     | '/timeline'
+    | '/update-password'
     | '/visa-categories'
     | '/profile'
     | '/watchlist'
@@ -223,7 +245,9 @@ export interface FileRouteTypes {
     | '/calculator'
     | '/compare'
     | '/eligibility'
+    | '/reset-password'
     | '/timeline'
+    | '/update-password'
     | '/visa-categories'
     | '/_authenticated/profile'
     | '/_authenticated/watchlist'
@@ -244,7 +268,9 @@ export interface RootRouteChildren {
   CalculatorRoute: typeof CalculatorRoute
   CompareRoute: typeof CompareRoute
   EligibilityRoute: typeof EligibilityRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   TimelineRoute: typeof TimelineRoute
+  UpdatePasswordRoute: typeof UpdatePasswordRoute
   VisaCategoriesRoute: typeof VisaCategoriesRoute
   CountriesCodeRoute: typeof CountriesCodeRoute
   UpdatesIdRoute: typeof UpdatesIdRoute
@@ -303,11 +329,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EligibilityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/timeline': {
       id: '/timeline'
       path: '/timeline'
       fullPath: '/timeline'
       preLoaderRoute: typeof TimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/update-password': {
+      id: '/update-password'
+      path: '/update-password'
+      fullPath: '/update-password'
+      preLoaderRoute: typeof UpdatePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/visa-categories': {
@@ -418,7 +458,9 @@ const rootRouteChildren: RootRouteChildren = {
   CalculatorRoute: CalculatorRoute,
   CompareRoute: CompareRoute,
   EligibilityRoute: EligibilityRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   TimelineRoute: TimelineRoute,
+  UpdatePasswordRoute: UpdatePasswordRoute,
   VisaCategoriesRoute: VisaCategoriesRoute,
   CountriesCodeRoute: CountriesCodeRoute,
   UpdatesIdRoute: UpdatesIdRoute,

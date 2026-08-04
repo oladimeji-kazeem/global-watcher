@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowLeft, Calendar, CheckCircle2, ExternalLink, ShieldCheck, Users, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Calendar, CheckCircle2, ExternalLink, ShieldCheck, Users, Send, Loader2, LineChart, Search, TrendingUp, Lightbulb } from "lucide-react";
 import { statusStyles, formatDate, type ImmigrationChange, fetchChangeById, fetchChanges } from "@/lib/data-service";
 import { notifyWatchlistMatches } from "@/lib/notify.functions";
 
@@ -101,6 +101,68 @@ function ChangeDetail() {
               ))}
             </div>
           </section>
+
+          {/* 4-Quadrant Analytics Section */}
+          {(c.analytic_descriptive || c.analytic_diagnostic || c.analytic_predictive || c.analytic_prescriptive) && (
+            <section className="mt-8">
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold">Intelligence & Analytics</h2>
+                <p className="text-sm text-muted-foreground">AI-driven insights on this policy change</p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                
+                {c.analytic_descriptive && (
+                  <div className="rounded-2xl bg-[color:var(--info)]/5 border border-[color:var(--info)]/20 p-5">
+                    <div className="flex items-center gap-2 text-[color:var(--info)] mb-3">
+                      <div className="p-1.5 rounded-lg bg-[color:var(--info)]/10">
+                        <LineChart className="h-4 w-4" />
+                      </div>
+                      <h3 className="font-semibold text-sm">Descriptive Analytics</h3>
+                    </div>
+                    <div className="text-sm leading-relaxed text-foreground/90">{c.analytic_descriptive}</div>
+                  </div>
+                )}
+
+                {c.analytic_diagnostic && (
+                  <div className="rounded-2xl bg-[color:var(--warning)]/5 border border-[color:var(--warning)]/20 p-5">
+                    <div className="flex items-center gap-2 text-[color:var(--warning)] mb-3">
+                      <div className="p-1.5 rounded-lg bg-[color:var(--warning)]/10">
+                        <Search className="h-4 w-4" />
+                      </div>
+                      <h3 className="font-semibold text-sm">Diagnostic Analytics</h3>
+                    </div>
+                    <div className="text-sm leading-relaxed text-foreground/90">{c.analytic_diagnostic}</div>
+                  </div>
+                )}
+
+                {c.analytic_predictive && (
+                  <div className="rounded-2xl bg-[color:var(--success)]/5 border border-[color:var(--success)]/20 p-5">
+                    <div className="flex items-center gap-2 text-[color:var(--success)] mb-3">
+                      <div className="p-1.5 rounded-lg bg-[color:var(--success)]/10">
+                        <TrendingUp className="h-4 w-4" />
+                      </div>
+                      <h3 className="font-semibold text-sm">Predictive Analytics</h3>
+                    </div>
+                    <div className="text-sm leading-relaxed text-foreground/90">{c.analytic_predictive}</div>
+                  </div>
+                )}
+
+                {c.analytic_prescriptive && (
+                  <div className="rounded-2xl bg-[color:var(--primary)]/5 border border-[color:var(--primary)]/20 p-5 glow-cyan relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[color:var(--primary)]/10 blur-3xl -z-10 rounded-full translate-x-1/2 -translate-y-1/2" />
+                    <div className="flex items-center gap-2 text-[color:var(--primary)] mb-3">
+                      <div className="p-1.5 rounded-lg bg-[color:var(--primary)]/10">
+                        <Lightbulb className="h-4 w-4" />
+                      </div>
+                      <h3 className="font-semibold text-sm">Prescriptive Analytics</h3>
+                    </div>
+                    <div className="text-sm leading-relaxed text-foreground/90">{c.analytic_prescriptive}</div>
+                  </div>
+                )}
+
+              </div>
+            </section>
+          )}
         </div>
 
         <aside className="space-y-6">

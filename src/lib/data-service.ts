@@ -22,6 +22,10 @@ export interface ImmigrationChange {
     impact: string;
     reviewed_by: string;
     key_points: string[];
+    analytic_descriptive?: string;
+    analytic_diagnostic?: string;
+    analytic_predictive?: string;
+    analytic_prescriptive?: string;
 }
 
 export interface Country {
