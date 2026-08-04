@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import "../lib/i18n";
 
 import appCss from "../styles.css?url";
 import { PageShell, SiteHeader, SiteFooter } from "../components/site-shell";
@@ -91,6 +92,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" },
       { rel: "icon", href: "/logo.png", type: "image/png" },
+      { rel: "alternate", type: "application/rss+xml", title: "Immigration Radar Updates RSS Feed", href: "/api/rss" },
+    ],
+    scripts: [
+      { src: "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit", async: true },
+      { children: `function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element'); }` }
     ],
   }),
   shellComponent: RootShell,

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { type ImmigrationChange, type ChangeStatus } from "@/lib/data-service";
 import { createChange, updateChange } from "@/lib/admin.functions";
+import { broadcastToSocialMedia } from "@/lib/social.functions";
 
 export function ChangeForm({
   initialData,
@@ -12,6 +13,7 @@ export function ChangeForm({
   onSuccess: (change: ImmigrationChange) => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const [broadcastSocial, setBroadcastSocial] = useState(false);
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,6 +37,15 @@ export function ChangeForm({
         data.id = data.id || `change-${Date.now()}`;
         result = await createChange({ data });
       }
+
+      if (broadcastSocial && (result?.id || initialData?.id)) {
+        try {
+          await broadcastToSocialMedia({ data: { changeId: (result as any)?.id || initialData!.id } });
+        } catch (e) {
+          console.error("Social broadcast failed:", e);
+        }
+      }
+
       onSuccess(result as ImmigrationChange);
       onClose();
     } catch (err: any) {
@@ -151,6 +162,18 @@ export function ChangeForm({
                 <textarea name="analytic_prescriptive" rows={2} defaultValue={initialData?.analytic_prescriptive} className="mt-1 block w-full rounded-md border border-border bg-background p-2 text-sm" />
               </label>
             </div>
+          </div>
+
+          <div className="pt-4 mt-6 border-t border-border flex items-center justify-between">
+            <label className="flex items-center gap-2 text-sm cursor-pointer hover:text-white transition">
+              <input 
+                type="checkbox" 
+                checked={broadcastSocial} 
+                onChange={(e) => setBroadcastSocial(e.target.checked)}
+                className="rounded bg-background/50 border-border text-[color:var(--primary)] focus:ring-[color:var(--primary)] focus:ring-offset-background"
+              />
+              Broadcast to Social Media (X, LinkedIn) on save
+            </label>
           </div>
           
           <div className="flex justify-end gap-3 pt-4 border-t border-border mt-6">

@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Radar, ArrowUpRight, Bell, LogIn, LogOut, User as UserIcon, FileText, Globe, Clock, Shield, Sparkles, Calculator, Target, ShieldAlert, Scale } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 const nav = [
   { to: "/", label: "Dashboard" },
@@ -32,6 +33,7 @@ function CookieBanner() {
 }
 
 export function SiteHeader() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const navigate = useNavigate();
@@ -70,18 +72,21 @@ export function SiteHeader() {
           <Link
             to="/"
             activeOptions={{ exact: true }}
-            className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2"
+            className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2 notranslate"
           >
-            Dashboard
+            {t("nav.dashboard", "Dashboard")}
           </Link>
           <Link
             to="/updates"
-            className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2"
+            className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2 notranslate"
           >
-            <Radar className="h-4 w-4" /> Explore
+            <Radar className="h-4 w-4" /> {t("nav.updates", "Explore")}
           </Link>
         </nav>
         <div className="flex items-center gap-2">
+          {/* Google Translate Widget Container */}
+          <div id="google_translate_element" className="mr-2 scale-90 origin-right opacity-80 hover:opacity-100 transition" />
+          
           {ready && email ? (
             <>
               <Link to="/watchlist" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-hero-gradient text-white text-sm font-medium px-4 py-2 glow-cyan hover:opacity-90 transition">
@@ -207,9 +212,11 @@ export function AppSidebarLayout({ children }: { children: ReactNode }) {
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground px-3 flex items-center gap-2 mb-3"><Radar className="h-3 w-3" /> Explore Hub</div>
           {sideNav.map((n, i) => {
             const Icon = n.icon;
+            // Map the label to translation key
+            const tKey = n.label.toLowerCase().replace(/ /g, "_");
             return (
-              <Link key={i} to={n.to} search={n.search} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card/60 transition data-[status=active]:bg-hero-gradient data-[status=active]:text-white data-[status=active]:glow-cyan hover:text-foreground">
-                <Icon className="h-4 w-4" /> {n.label}
+              <Link key={i} to={n.to} search={n.search} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card/60 transition data-[status=active]:bg-hero-gradient data-[status=active]:text-white data-[status=active]:glow-cyan hover:text-foreground notranslate">
+                <Icon className="h-4 w-4" /> {t(`nav.${tKey}`, n.label)}
               </Link>
             )
           })}
