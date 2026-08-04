@@ -2,38 +2,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 import { ArrowUpRight, TrendingUp, Users, Search, Globe2, Eye, ShieldCheck, Database, Activity } from "lucide-react";
 import { fetchCountries, fetchChanges, type ImmigrationChange, type Country } from "@/lib/data-service";
+import { getAnalyticsStats } from "@/lib/analytics.functions";
 import { useMemo } from "react";
 
 export const Route = createFileRoute("/admin/")({
     loader: async () => {
-        const [countries, changes] = await Promise.all([fetchCountries(), fetchChanges()]);
-        return { countries, changes };
+        const [countries, changes, analytics] = await Promise.all([fetchCountries(), fetchChanges(), getAnalyticsStats()]);
+        return { countries, changes, analytics };
     },
     component: AdminAnalyticsDashboard
 });
 
-const monthlyTraffic = [
-    { name: 'Feb', visits: 12400, organic: 8200 },
-    { name: 'Mar', visits: 18500, organic: 11000 },
-    { name: 'Apr', visits: 24800, organic: 16500 },
-    { name: 'May', visits: 39600, organic: 28400 },
-    { name: 'Jun', visits: 52400, organic: 39100 },
-    { name: 'Jul', visits: 81500, organic: 62400 },
-];
-
-const jurisdictionViews = [
-    { name: 'United Kingdom', views: 32400 },
-    { name: 'Canada', views: 25100 },
-    { name: 'United States', views: 18200 },
-    { name: 'Australia', views: 14500 },
-    { name: 'Germany', views: 9800 },
-    { name: 'Ireland', views: 4200 }
-];
-
 const COLORS = ['#2DA099', '#3b82f6', '#8b5cf6', '#eab308', '#ec4899', '#14b8a6', '#f97316', '#64748b'];
 
 function AdminAnalyticsDashboard() {
-    const { countries, changes } = Route.useLoaderData();
+    const { countries, changes, analytics } = Route.useLoaderData();
+    const topPagesChartData = analytics.topPages.map(p => ({ name: p.path, views: p.count }));
 
     // 1. Process Updates by Month (Last 6 Months Area Chart)
     const monthlyUpdates = useMemo(() => {
@@ -95,7 +79,7 @@ function AdminAnalyticsDashboard() {
                 {[
                     { label: "Total Monitored Rules", value: changes.length.toString(), trend: "+4 This Week", icon: Database, color: "text-blue-400" },
                     { label: "Active Threat Alerts", value: activeAlertsCount.toString(), trend: "Attention Needed", icon: Activity, color: "text-amber-400" },
-                    { label: "Registered Dashboards", value: "3,192", trend: "+12.1%", icon: Users, color: "text-[color:var(--primary)]" },
+                    { label: "Page Views (30d)", value: analytics.totalViews.toString(), trend: "Live", icon: Eye, color: "text-[color:var(--primary)]" },
                     { label: "Jurisdictions Monitored", value: countries.length.toString(), trend: "Stable", icon: Globe2, color: "text-green-400" },
                 ].map((kpi, i) => {
                     const Icon = kpi.icon;
@@ -121,32 +105,26 @@ function AdminAnalyticsDashboard() {
                 <div className="lg:col-span-2 rounded-xl border border-border/50 bg-card/40 backdrop-blur-md p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h3 className="text-lg font-semibold text-white">Platform Traffic Trend</h3>
-                            <p className="text-xs text-muted-foreground mt-1">Total visits vs organic active sessions</p>
+                            <h3 className="text-lg font-semibold text-white">Platform Traffic Trend (30d)</h3>
+                            <p className="text-xs text-muted-foreground mt-1">Total page views per day</p>
                         </div>
                         <div className="flex items-center gap-4 text-xs font-semibold">
-                            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue-500" /> Total Visits</div>
-                            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[color:var(--primary)]" /> Organic SEO</div>
+                            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-blue-500" /> Page Views</div>
                         </div>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={monthlyTraffic} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <AreaChart data={analytics.dailyViews} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorVisits2" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                     </linearGradient>
-                                    <linearGradient id="colorOrganic" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#2DA099" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#2DA099" stopOpacity={0} />
-                                    </linearGradient>
                                 </defs>
                                 <XAxis dataKey="name" stroke="#525252" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="#525252" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+                                <YAxis stroke="#525252" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => v} />
                                 <RechartsTooltip contentStyle={{ backgroundColor: '#09090b', borderRadius: '8px', border: '1px solid #27272a' }} itemStyle={{ color: '#fff' }} />
-                                <Area type="monotone" dataKey="visits" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorVisits2)" />
-                                <Area type="monotone" dataKey="organic" stroke="#2DA099" strokeWidth={2} fillOpacity={1} fill="url(#colorOrganic)" />
+                                <Area type="monotone" dataKey="views" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorVisits2)" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -184,13 +162,13 @@ function AdminAnalyticsDashboard() {
             {/* Chart Row 2 */}
             <div className="grid lg:grid-cols-2 gap-6 pb-6">
                 <div className="rounded-xl border border-border/50 bg-card/40 backdrop-blur-md p-6">
-                    <h3 className="text-lg font-semibold text-white">Countries of View (Traffic)</h3>
-                    <p className="text-xs text-muted-foreground mt-1 mb-6">SEO volume distributed dynamically across global jurisdictions</p>
+                    <h3 className="text-lg font-semibold text-white">Top Viewed Pages</h3>
+                    <p className="text-xs text-muted-foreground mt-1 mb-6">Most popular routes in the last 30 days</p>
                     <div className="h-[250px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={jurisdictionViews} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
+                            <BarChart data={topPagesChartData} layout="vertical" margin={{ top: 0, right: 30, left: 40, bottom: 0 }}>
                                 <XAxis type="number" hide />
-                                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} stroke="#a1a1aa" fontSize={12} width={100} />
+                                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} stroke="#a1a1aa" fontSize={12} width={120} tickFormatter={(v) => v.length > 15 ? v.substring(0, 15) + "..." : v} />
                                 <RechartsTooltip cursor={{ fill: '#f4f4f5', opacity: 0.05 }} contentStyle={{ backgroundColor: '#09090b', borderRadius: '8px', border: '1px solid #27272a' }} />
                                 <Bar dataKey="views" fill="#8b5cf6" radius={[0, 4, 4, 0]} barSize={24} />
                             </BarChart>

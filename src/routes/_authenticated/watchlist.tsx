@@ -36,11 +36,22 @@ const DEFAULTS: Preferences = {
   enabled: true,
 };
 
-function loadPrefs(): Preferences {
-  if (typeof window === "undefined") return DEFAULTS;
+async function loadPrefs(): Promise<Preferences> {
   try {
-    const raw = localStorage.getItem("ir:prefs");
-    return raw ? { ...DEFAULTS, ...JSON.parse(raw) } : DEFAULTS;
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) return DEFAULTS;
+    
+    const { data, error } = await supabase.from("watchlists").select("*").eq("user_id", sessionData.session.user.id).maybeSingle();
+    if (error || !data) return { ...DEFAULTS, email: sessionData.session.user.email || "" };
+    
+    return {
+      email: data.email,
+      countries: data.countries,
+      visaTypes: data.visa_types,
+      statuses: data.statuses as ChangeStatus[],
+      enabled: data.enabled,
+      frequency: "instant" // UI only
+    };
   } catch { return DEFAULTS; }
 }
 
@@ -50,8 +61,9 @@ function WatchlistPage() {
   const [saved, setSaved] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => { setPrefs(loadPrefs()); setHydrated(true); }, []);
-  useEffect(() => { if (hydrated) localStorage.setItem("ir:prefs", JSON.stringify(prefs)); }, [prefs, hydrated]);
+  useEffect(() => { 
+    loadPrefs().then(p => { setPrefs(p); setHydrated(true); }); 
+  }, []);
 
   const toggle = <K extends keyof Preferences>(key: K, value: string) =>
     setPrefs((p) => {
@@ -69,8 +81,21 @@ function WatchlistPage() {
     });
   }, [prefs, changes]);
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    
+    await supabase.from("watchlists").upsert({
+      user_id: session.user.id,
+      email: prefs.email,
+      countries: prefs.countries,
+      visa_types: prefs.visaTypes,
+      statuses: prefs.statuses,
+      enabled: prefs.enabled,
+      updated_at: new Date().toISOString()
+    });
+    
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };
@@ -191,17 +216,9 @@ function WatchlistPage() {
 
             {saved && (
               <div className="rounded-xl border border-[color:var(--success)]/30 bg-[color:var(--success)]/10 text-[color:var(--success)] px-4 py-3 text-sm flex items-center gap-2">
-                <Check className="h-4 w-4" /> Preferences saved to this browser. Live email delivery activates once your workspace enables notifications.
+                <Check className="h-4 w-4" /> Preferences securely saved to your account. You will receive email alerts based on these criteria.
               </div>
             )}
-
-            <div className="rounded-xl border border-border bg-background/40 p-4 text-xs text-muted-foreground flex gap-3">
-              <Info className="h-4 w-4 text-[color:var(--info)] mt-0.5 shrink-0" />
-              <p>
-                Live email dispatch requires the platform admin to enable the notification backend and verify a sender domain.
-                Until then, your matches are shown live below and your preferences are saved locally.
-              </p>
-            </div>
           </form>
 
           {/* Live matches preview */}

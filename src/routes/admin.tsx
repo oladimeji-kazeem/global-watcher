@@ -1,11 +1,13 @@
-import { createFileRoute, Outlet, Link, useLocation, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { Outlet, Link, useLocation } from '@tanstack/react-start'
 import { LayoutDashboard, Database, ShieldAlert, ArrowLeft, Users } from 'lucide-react'
-import { supabase } from '@/integrations/supabase/client'
+import { checkIsAdmin } from '@/lib/admin.functions'
 
 export const Route = createFileRoute('/admin')({
   beforeLoad: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session || session.user.email !== "olakazeem@outlook.com") {
+    try {
+      await checkIsAdmin();
+    } catch (e) {
       throw redirect({ to: "/" });
     }
   },

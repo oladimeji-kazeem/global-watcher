@@ -2,7 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppSidebarLayout, PageHeader } from "@/components/site-shell";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Mail, Shield, Bell, Save, Loader2, CheckCircle2 } from "lucide-react";
+import { User, Mail, Shield, Bell, Save, Loader2, CheckCircle2, ShieldAlert } from "lucide-react";
+import { checkIsAdmin } from "@/lib/admin.functions";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,
@@ -17,6 +19,7 @@ function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const navigate = useNavigate();
 
@@ -27,6 +30,7 @@ function ProfilePage() {
         setFirstName(user.user_metadata?.first_name || "");
         setLastName(user.user_metadata?.last_name || "");
         setAlerts(user.user_metadata?.email_alerts ?? true);
+        checkIsAdmin().then(setIsAdmin).catch(() => setIsAdmin(false));
       }
       setIsLoading(false);
     });
@@ -75,9 +79,17 @@ function ProfilePage() {
             <div className="space-y-6">
 
               <section className="rounded-2xl border border-border/40 bg-card/20 backdrop-blur-md overflow-hidden">
-                <div className="border-b border-border/40 px-6 py-4 flex items-center gap-3">
-                  <User className="h-4 w-4 text-[color:var(--primary)]" />
-                  <h2 className="text-[15px] font-semibold text-white">Personal Information</h2>
+                <div className="border-b border-border/40 px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <User className="h-4 w-4 text-[color:var(--primary)]" />
+                    <h2 className="text-[15px] font-semibold text-white">Personal Information</h2>
+                  </div>
+                  {isAdmin && (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-400 border border-amber-500/20">
+                      <ShieldAlert className="h-3 w-3" />
+                      Administrator
+                    </span>
+                  )}
                 </div>
                 <div className="p-6 grid sm:grid-cols-2 gap-6">
                   <div className="space-y-1.5">
@@ -138,12 +150,22 @@ function ProfilePage() {
               </section>
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
-                <button
-                  onClick={handleSignOut}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[color:var(--destructive)]/30 text-[color:var(--destructive)] hover:bg-[color:var(--destructive)]/10 text-sm font-medium transition"
-                >
-                  Sign Out
-                </button>
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-[color:var(--destructive)]/30 text-[color:var(--destructive)] hover:bg-[color:var(--destructive)]/10 text-sm font-medium transition"
+                  >
+                    Sign Out
+                  </button>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 text-sm font-medium transition"
+                    >
+                      Admin Dashboard
+                    </Link>
+                  )}
+                </div>
 
                 <div className="flex items-center gap-4 w-full sm:w-auto">
                   {success && (

@@ -2,8 +2,6 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Radar, Mail, Lock, LogIn, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
-
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
@@ -50,10 +48,11 @@ function AuthPage() {
 
   const google = async () => {
     setBusy(true); setErr(null);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) { setErr(String(result.error.message ?? result.error)); setBusy(false); return; }
-    if (result.redirected) return;
-    navigate({ to: "/watchlist" });
+    const { error } = await supabase.auth.signInWithOAuth({ 
+      provider: "google", 
+      options: { redirectTo: window.location.origin } 
+    });
+    if (error) { setErr(error.message); setBusy(false); return; }
   };
 
   return (

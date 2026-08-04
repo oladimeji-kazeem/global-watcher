@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { Database, FileEdit, Trash2, Plus, Search, Filter, AlertCircle } from "lucide-react";
 import { fetchChanges, type ImmigrationChange } from "@/lib/data-service";
-import { supabase } from "@/integrations/supabase/client";
+import { deleteChange } from "@/lib/admin.functions";
+import { ChangeForm } from "@/components/admin/ChangeForm";
 
 export const Route = createFileRoute("/admin/content")({
     loader: async () => {
@@ -13,10 +14,15 @@ export const Route = createFileRoute("/admin/content")({
 });
 
 function AdminContentManager() {
+    const router = useRouter();
     const { changes: initialChanges } = Route.useLoaderData();
     const [changes, setChanges] = useState<ImmigrationChange[]>(initialChanges);
     const [search, setSearch] = useState("");
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    
+    // Form state
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingChange, setEditingChange] = useState<ImmigrationChange | null>(null);
 
     const filtered = changes.filter(c =>
         c.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -27,26 +33,45 @@ function AdminContentManager() {
         if (!window.confirm("Are you sure you want to permanently delete this record? This action cannot be undone.")) return;
 
         setIsDeleting(id);
-        const { error } = await (supabase as any).from('immigration_changes').delete().eq('id', id);
-
-        if (!error) {
+        try {
+            await deleteChange({ data: { id } });
             setChanges(prev => prev.filter(c => c.id !== id));
-        } else {
-            alert("Failed to delete record. Please try again.");
+            router.invalidate();
+        } catch (e: any) {
+            alert("Failed to delete record: " + e.message);
         }
         setIsDeleting(null);
     };
 
-    const handleEdit = (id: string) => {
-        alert(`Edit Action Triggered for Record ID: ${id}\n\nIn a full production environment, this would open a side-drawer or modal with the Supabase connected form to mutate this row.`);
+    const handleEdit = (change: ImmigrationChange) => {
+        setEditingChange(change);
+        setIsFormOpen(true);
     };
 
     const handleAdd = () => {
-        alert("Add Record Triggered.\n\nIn production, this opens the Supabase mutation form for the immigration_changes table.");
+        setEditingChange(null);
+        setIsFormOpen(true);
+    };
+
+    const handleFormSuccess = (savedChange: ImmigrationChange) => {
+        // Optimistic UI update
+        if (editingChange) {
+            setChanges(prev => prev.map(c => c.id === savedChange.id ? savedChange : c));
+        } else {
+            setChanges(prev => [savedChange, ...prev]);
+        }
+        router.invalidate();
     };
 
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+            {isFormOpen && (
+                <ChangeForm 
+                    initialData={editingChange} 
+                    onClose={() => setIsFormOpen(false)} 
+                    onSuccess={handleFormSuccess} 
+                />
+            )}
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
@@ -117,7 +142,7 @@ function AdminContentManager() {
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
-                                                onClick={() => handleEdit(c.id)}
+                                                onClick={() => handleEdit(c)}
                                                 className="p-2 rounded-lg text-muted-foreground hover:bg-white/10 hover:text-white transition"
                                                 title="Edit Record"
                                             >

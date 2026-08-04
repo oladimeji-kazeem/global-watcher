@@ -48,24 +48,27 @@ export const notifyWatchlistMatches = createServerFn({ method: "POST" })
     const html = await render(createElement(Email, templateData));
     const text = `${change.title}\n${change.country} · ${change.visa_type} · Effective ${formatDate(change.effective_date)}\n\nPrevious rule: ${change.previous_rule}\nNew rule: ${change.new_rule}\n\nOfficial source (${change.source_name}): ${change.source_url}\nDetails: ${detailUrl}`;
 
-    const { supabase } = await import("@/integrations/supabase/client");
+    const { Resend } = await import("resend");
+    const resend = new Resend(process.env.RESEND_API_KEY || "dummy");
 
     let sent = 0, skipped = 0;
     for (const m of matches) {
       try {
-        const { data: res, error } = await supabase.functions.invoke('send-watchlist-alert', {
-          body: {
-            email: m.email,
-            country: change.country,
-            updateTitle: change.title,
-            updateDate: formatDate(change.effective_date)
-          }
-        });
-
-        if (error) throw new Error(error.message);
-        if (res) sent++;
-      } catch (e) {
-        console.error("[notify] Edge Function execution failed:", (e as Error).message);
+        if (process.env.RESEND_API_KEY) {
+          const { error } = await resend.emails.send({
+            from: "Immigration Radar <alerts@immigrationradar.com>",
+            to: m.email,
+            subject,
+            html,
+            text
+          });
+          if (error) throw new Error(error.message);
+        } else {
+          console.log(`[notify] Simulated email to ${m.email} - subject: ${subject}`);
+        }
+        sent++;
+      } catch (e: any) {
+        console.error("[notify] Email send failed:", e.message);
         skipped++;
       }
     }
