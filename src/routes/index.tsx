@@ -25,7 +25,7 @@ function Dashboard() {
   const latest = changes.slice(0, 3);
   return (
     <main>
-      <Hero />
+      <Hero changes={changes} />
       <div className="mx-auto max-w-7xl px-6 pb-16 space-y-16">
         <StatsRow />
         <section className="space-y-6">
@@ -48,9 +48,9 @@ function Dashboard() {
   );
 }
 
-function Hero() {
+function Hero({ changes }: { changes: ImmigrationChange[] }) {
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden flex flex-col">
       <div className="mx-auto max-w-7xl px-6 pt-20 pb-24 grid lg:grid-cols-[1.2fr_1fr] gap-12 items-center">
         <div className="space-y-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 backdrop-blur px-3 py-1 text-xs text-muted-foreground">
@@ -82,7 +82,29 @@ function Hero() {
         </div>
         <RadarVisual />
       </div>
+      {changes && changes.length > 0 && <NewsTicker changes={changes} />}
     </section>
+  );
+}
+
+function NewsTicker({ changes }: { changes: ImmigrationChange[] }) {
+  const tickerItems = changes.slice(0, 15);
+  return (
+    <div className="w-full overflow-hidden border-y border-border bg-card/40 backdrop-blur py-3 flex">
+      <div className="flex w-max whitespace-nowrap animate-marquee hover:[animation-play-state:paused]">
+        {[...tickerItems, ...tickerItems].map((c, i) => {
+          const s = statusStyles[c.status];
+          return (
+            <Link to="/updates/$id" params={{ id: c.id }} key={`${c.id}-${i}`} className="inline-flex items-center gap-2 px-8 border-r border-border/50 last:border-0 hover:text-[color:var(--primary)] transition-colors">
+              <span className="text-lg">{c.flag}</span>
+              <span className="text-sm font-medium">{c.country}:</span>
+              <span className="text-sm text-muted-foreground">{c.title}</span>
+              <span className={`ml-2 h-1.5 w-1.5 rounded-full ${s.dot}`} />
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

@@ -1,14 +1,26 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { fetchCountries } from "@/lib/data-service";
+import { fetchCountries, fetchChangesByCountry } from "@/lib/data-service";
 import { AppSidebarLayout } from "@/components/site-shell";
 import { ArrowLeft, Briefcase, TrendingUp, Lightbulb, GraduationCap, Building2 } from "lucide-react";
+import { ChangeCard } from "@/components/change-card";
 
 export const Route = createFileRoute("/countries/$code")({
     loader: async ({ params }) => {
         const countries = await fetchCountries();
         const country = countries.find(c => c.code.toLowerCase() === params.code.toLowerCase());
         if (!country) throw notFound();
-        return { country };
+        const changes = await fetchChangesByCountry(country.name);
+        return { country, changes };
+    },
+    head: ({ loaderData }) => {
+        if (!loaderData) return {};
+        const { country } = loaderData;
+        return {
+            meta: [
+                { title: `${country.name} Immigration Rules & Visa Updates 2026` },
+                { name: "description", content: `Track the latest immigration rules, visa policy changes, and skilled worker requirements for ${country.name}.` }
+            ]
+        };
     },
     component: CountryStrategyPage
 });
@@ -40,8 +52,28 @@ const mockIntelligence = (code: string) => {
 }
 
 function CountryStrategyPage() {
-    const { country } = Route.useLoaderData();
+    const { country, changes } = Route.useLoaderData();
     const intel = mockIntelligence(country.code);
+
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": `${country.name} Immigration Rules & Visa Updates 2026`,
+        "description": `Track the latest immigration rules, visa policy changes, and skilled worker requirements for ${country.name}.`,
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": changes.map((c, i) => ({
+                "@type": "ListItem",
+                "position": i + 1,
+                "item": {
+                    "@type": "Article",
+                    "headline": c.title,
+                    "datePublished": c.effective_date,
+                    "description": c.description
+                }
+            }))
+        }
+    };
 
     return (
         <AppSidebarLayout>
@@ -109,8 +141,24 @@ function CountryStrategyPage() {
                         </div>
                     </div>
 
+                    {/* Latest Updates Feed */}
+                    {changes.length > 0 && (
+                        <div className="pt-8">
+                            <h2 className="text-2xl font-semibold text-white mb-6 flex items-center gap-2">
+                                <TrendingUp className="h-6 w-6 text-[color:var(--primary)]" />
+                                Latest {country.name} Updates
+                            </h2>
+                            <div className="grid gap-4">
+                                {changes.map((c) => <ChangeCard key={c.id} change={c} />)}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </main>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+            />
         </AppSidebarLayout>
     );
 }

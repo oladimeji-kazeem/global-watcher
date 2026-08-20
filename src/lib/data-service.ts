@@ -54,6 +54,15 @@ export async function fetchChanges(): Promise<ImmigrationChange[]> {
     return data as ImmigrationChange[];
 }
 
+export async function fetchChangesByCountry(countryName: string): Promise<ImmigrationChange[]> {
+    const { data, error } = await (supabase as any).from("immigration_changes").select("*").eq("country", countryName).order("effective_date", { ascending: false });
+    if (error) {
+        console.error("Error fetching immigration changes by country:", error);
+        return [];
+    }
+    return data as ImmigrationChange[];
+}
+
 export async function fetchChangeById(id: string): Promise<ImmigrationChange | null> {
     const { data, error } = await (supabase as any).from("immigration_changes").select("*").eq("id", id).single();
     if (error) {
