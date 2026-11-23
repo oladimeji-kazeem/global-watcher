@@ -20,15 +20,24 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as VisaCategoriesRouteImport } from './routes/visa-categories'
+import { Route as CountrySlugIndexRouteImport } from './routes/$countrySlug/index'
+import { Route as CountrySlugPageSlugRouteImport } from './routes/$countrySlug/$pageSlug'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedWatchlistRouteImport } from './routes/_authenticated/watchlist'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminContentRouteImport } from './routes/admin/content'
+import { Route as AdminJobsRouteImport } from './routes/admin/jobs'
+import { Route as AdminPagesRouteImport } from './routes/admin/pages'
+import { Route as AdminSponsorsRouteImport } from './routes/admin/sponsors'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as ApiRssRouteImport } from './routes/api/rss'
 import { Route as CountriesIndexRouteImport } from './routes/countries.index'
-import { Route as CountriesCodeRouteImport } from './routes/countries.$code'
 import { Route as UpdatesIndexRouteImport } from './routes/updates.index'
 import { Route as UpdatesIdRouteImport } from './routes/updates.$id'
+import { Route as CountrySlugCompanyCompanySlugRouteImport } from './routes/$countrySlug/company/$companySlug'
+import { Route as CountrySlugJobsIndexRouteImport } from './routes/$countrySlug/jobs/index'
+import { Route as CountrySlugJobsJobIdRouteImport } from './routes/$countrySlug/jobs/$jobId'
+import { Route as CountrySlugSponsorsIndexRouteImport } from './routes/$countrySlug/sponsors/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +93,16 @@ const VisaCategoriesRoute = VisaCategoriesRouteImport.update({
   path: '/visa-categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CountrySlugIndexRoute = CountrySlugIndexRouteImport.update({
+  id: '/$countrySlug/',
+  path: '/$countrySlug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountrySlugPageSlugRoute = CountrySlugPageSlugRouteImport.update({
+  id: '/$countrySlug/$pageSlug',
+  path: '/$countrySlug/$pageSlug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -104,19 +123,34 @@ const AdminContentRoute = AdminContentRouteImport.update({
   path: '/content',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminJobsRoute = AdminJobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPagesRoute = AdminPagesRouteImport.update({
+  id: '/pages',
+  path: '/pages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSponsorsRoute = AdminSponsorsRouteImport.update({
+  id: '/sponsors',
+  path: '/sponsors',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiRssRoute = ApiRssRouteImport.update({
+  id: '/api/rss',
+  path: '/api/rss',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CountriesIndexRoute = CountriesIndexRouteImport.update({
   id: '/countries/',
   path: '/countries/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CountriesCodeRoute = CountriesCodeRouteImport.update({
-  id: '/countries/$code',
-  path: '/countries/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UpdatesIndexRoute = UpdatesIndexRouteImport.update({
@@ -129,6 +163,28 @@ const UpdatesIdRoute = UpdatesIdRouteImport.update({
   path: '/updates/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CountrySlugCompanyCompanySlugRoute =
+  CountrySlugCompanyCompanySlugRouteImport.update({
+    id: '/$countrySlug/company/$companySlug',
+    path: '/$countrySlug/company/$companySlug',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CountrySlugJobsIndexRoute = CountrySlugJobsIndexRouteImport.update({
+  id: '/$countrySlug/jobs/',
+  path: '/$countrySlug/jobs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountrySlugJobsJobIdRoute = CountrySlugJobsJobIdRouteImport.update({
+  id: '/$countrySlug/jobs/$jobId',
+  path: '/$countrySlug/jobs/$jobId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountrySlugSponsorsIndexRoute =
+  CountrySlugSponsorsIndexRouteImport.update({
+    id: '/$countrySlug/sponsors/',
+    path: '/$countrySlug/sponsors/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -141,15 +197,24 @@ export interface FileRoutesByFullPath {
   '/timeline': typeof TimelineRoute
   '/update-password': typeof UpdatePasswordRoute
   '/visa-categories': typeof VisaCategoriesRoute
+  '/$countrySlug/$pageSlug': typeof CountrySlugPageSlugRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/jobs': typeof AdminJobsRoute
+  '/admin/pages': typeof AdminPagesRoute
+  '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/users': typeof AdminUsersRoute
-  '/countries/$code': typeof CountriesCodeRoute
+  '/api/rss': typeof ApiRssRoute
   '/updates/$id': typeof UpdatesIdRoute
+  '/$countrySlug/': typeof CountrySlugIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/countries/': typeof CountriesIndexRoute
   '/updates/': typeof UpdatesIndexRoute
+  '/$countrySlug/company/$companySlug': typeof CountrySlugCompanyCompanySlugRoute
+  '/$countrySlug/jobs/$jobId': typeof CountrySlugJobsJobIdRoute
+  '/$countrySlug/jobs/': typeof CountrySlugJobsIndexRoute
+  '/$countrySlug/sponsors/': typeof CountrySlugSponsorsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -161,15 +226,24 @@ export interface FileRoutesByTo {
   '/timeline': typeof TimelineRoute
   '/update-password': typeof UpdatePasswordRoute
   '/visa-categories': typeof VisaCategoriesRoute
+  '/$countrySlug/$pageSlug': typeof CountrySlugPageSlugRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/jobs': typeof AdminJobsRoute
+  '/admin/pages': typeof AdminPagesRoute
+  '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/users': typeof AdminUsersRoute
-  '/countries/$code': typeof CountriesCodeRoute
+  '/api/rss': typeof ApiRssRoute
   '/updates/$id': typeof UpdatesIdRoute
+  '/$countrySlug': typeof CountrySlugIndexRoute
   '/admin': typeof AdminIndexRoute
   '/countries': typeof CountriesIndexRoute
   '/updates': typeof UpdatesIndexRoute
+  '/$countrySlug/company/$companySlug': typeof CountrySlugCompanyCompanySlugRoute
+  '/$countrySlug/jobs/$jobId': typeof CountrySlugJobsJobIdRoute
+  '/$countrySlug/jobs': typeof CountrySlugJobsIndexRoute
+  '/$countrySlug/sponsors': typeof CountrySlugSponsorsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -184,15 +258,24 @@ export interface FileRoutesById {
   '/timeline': typeof TimelineRoute
   '/update-password': typeof UpdatePasswordRoute
   '/visa-categories': typeof VisaCategoriesRoute
+  '/$countrySlug/$pageSlug': typeof CountrySlugPageSlugRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/watchlist': typeof AuthenticatedWatchlistRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/jobs': typeof AdminJobsRoute
+  '/admin/pages': typeof AdminPagesRoute
+  '/admin/sponsors': typeof AdminSponsorsRoute
   '/admin/users': typeof AdminUsersRoute
-  '/countries/$code': typeof CountriesCodeRoute
+  '/api/rss': typeof ApiRssRoute
   '/updates/$id': typeof UpdatesIdRoute
+  '/$countrySlug/': typeof CountrySlugIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/countries/': typeof CountriesIndexRoute
   '/updates/': typeof UpdatesIndexRoute
+  '/$countrySlug/company/$companySlug': typeof CountrySlugCompanyCompanySlugRoute
+  '/$countrySlug/jobs/$jobId': typeof CountrySlugJobsJobIdRoute
+  '/$countrySlug/jobs/': typeof CountrySlugJobsIndexRoute
+  '/$countrySlug/sponsors/': typeof CountrySlugSponsorsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -207,15 +290,24 @@ export interface FileRouteTypes {
     | '/timeline'
     | '/update-password'
     | '/visa-categories'
+    | '/$countrySlug/$pageSlug'
     | '/profile'
     | '/watchlist'
     | '/admin/content'
+    | '/admin/jobs'
+    | '/admin/pages'
+    | '/admin/sponsors'
     | '/admin/users'
-    | '/countries/$code'
+    | '/api/rss'
     | '/updates/$id'
+    | '/$countrySlug/'
     | '/admin/'
     | '/countries/'
     | '/updates/'
+    | '/$countrySlug/company/$companySlug'
+    | '/$countrySlug/jobs/$jobId'
+    | '/$countrySlug/jobs/'
+    | '/$countrySlug/sponsors/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -227,15 +319,24 @@ export interface FileRouteTypes {
     | '/timeline'
     | '/update-password'
     | '/visa-categories'
+    | '/$countrySlug/$pageSlug'
     | '/profile'
     | '/watchlist'
     | '/admin/content'
+    | '/admin/jobs'
+    | '/admin/pages'
+    | '/admin/sponsors'
     | '/admin/users'
-    | '/countries/$code'
+    | '/api/rss'
     | '/updates/$id'
+    | '/$countrySlug'
     | '/admin'
     | '/countries'
     | '/updates'
+    | '/$countrySlug/company/$companySlug'
+    | '/$countrySlug/jobs/$jobId'
+    | '/$countrySlug/jobs'
+    | '/$countrySlug/sponsors'
   id:
     | '__root__'
     | '/'
@@ -249,15 +350,24 @@ export interface FileRouteTypes {
     | '/timeline'
     | '/update-password'
     | '/visa-categories'
+    | '/$countrySlug/$pageSlug'
     | '/_authenticated/profile'
     | '/_authenticated/watchlist'
     | '/admin/content'
+    | '/admin/jobs'
+    | '/admin/pages'
+    | '/admin/sponsors'
     | '/admin/users'
-    | '/countries/$code'
+    | '/api/rss'
     | '/updates/$id'
+    | '/$countrySlug/'
     | '/admin/'
     | '/countries/'
     | '/updates/'
+    | '/$countrySlug/company/$companySlug'
+    | '/$countrySlug/jobs/$jobId'
+    | '/$countrySlug/jobs/'
+    | '/$countrySlug/sponsors/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -272,10 +382,16 @@ export interface RootRouteChildren {
   TimelineRoute: typeof TimelineRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
   VisaCategoriesRoute: typeof VisaCategoriesRoute
-  CountriesCodeRoute: typeof CountriesCodeRoute
+  CountrySlugPageSlugRoute: typeof CountrySlugPageSlugRoute
+  ApiRssRoute: typeof ApiRssRoute
   UpdatesIdRoute: typeof UpdatesIdRoute
+  CountrySlugIndexRoute: typeof CountrySlugIndexRoute
   CountriesIndexRoute: typeof CountriesIndexRoute
   UpdatesIndexRoute: typeof UpdatesIndexRoute
+  CountrySlugCompanyCompanySlugRoute: typeof CountrySlugCompanyCompanySlugRoute
+  CountrySlugJobsJobIdRoute: typeof CountrySlugJobsJobIdRoute
+  CountrySlugJobsIndexRoute: typeof CountrySlugJobsIndexRoute
+  CountrySlugSponsorsIndexRoute: typeof CountrySlugSponsorsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -357,6 +473,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VisaCategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$countrySlug/': {
+      id: '/$countrySlug/'
+      path: '/$countrySlug'
+      fullPath: '/$countrySlug/'
+      preLoaderRoute: typeof CountrySlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$countrySlug/$pageSlug': {
+      id: '/$countrySlug/$pageSlug'
+      path: '/$countrySlug/$pageSlug'
+      fullPath: '/$countrySlug/$pageSlug'
+      preLoaderRoute: typeof CountrySlugPageSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -385,6 +515,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContentRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/jobs': {
+      id: '/admin/jobs'
+      path: '/jobs'
+      fullPath: '/admin/jobs'
+      preLoaderRoute: typeof AdminJobsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/pages': {
+      id: '/admin/pages'
+      path: '/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AdminPagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sponsors': {
+      id: '/admin/sponsors'
+      path: '/sponsors'
+      fullPath: '/admin/sponsors'
+      preLoaderRoute: typeof AdminSponsorsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -392,18 +543,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/rss': {
+      id: '/api/rss'
+      path: '/api/rss'
+      fullPath: '/api/rss'
+      preLoaderRoute: typeof ApiRssRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/countries/': {
       id: '/countries/'
       path: '/countries'
       fullPath: '/countries/'
       preLoaderRoute: typeof CountriesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/countries/$code': {
-      id: '/countries/$code'
-      path: '/countries/$code'
-      fullPath: '/countries/$code'
-      preLoaderRoute: typeof CountriesCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/updates/': {
@@ -418,6 +569,34 @@ declare module '@tanstack/react-router' {
       path: '/updates/$id'
       fullPath: '/updates/$id'
       preLoaderRoute: typeof UpdatesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$countrySlug/company/$companySlug': {
+      id: '/$countrySlug/company/$companySlug'
+      path: '/$countrySlug/company/$companySlug'
+      fullPath: '/$countrySlug/company/$companySlug'
+      preLoaderRoute: typeof CountrySlugCompanyCompanySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$countrySlug/jobs/': {
+      id: '/$countrySlug/jobs/'
+      path: '/$countrySlug/jobs'
+      fullPath: '/$countrySlug/jobs/'
+      preLoaderRoute: typeof CountrySlugJobsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$countrySlug/jobs/$jobId': {
+      id: '/$countrySlug/jobs/$jobId'
+      path: '/$countrySlug/jobs/$jobId'
+      fullPath: '/$countrySlug/jobs/$jobId'
+      preLoaderRoute: typeof CountrySlugJobsJobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$countrySlug/sponsors/': {
+      id: '/$countrySlug/sponsors/'
+      path: '/$countrySlug/sponsors'
+      fullPath: '/$countrySlug/sponsors/'
+      preLoaderRoute: typeof CountrySlugSponsorsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -438,12 +617,18 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminContentRoute: typeof AdminContentRoute
+  AdminJobsRoute: typeof AdminJobsRoute
+  AdminPagesRoute: typeof AdminPagesRoute
+  AdminSponsorsRoute: typeof AdminSponsorsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminContentRoute: AdminContentRoute,
+  AdminJobsRoute: AdminJobsRoute,
+  AdminPagesRoute: AdminPagesRoute,
+  AdminSponsorsRoute: AdminSponsorsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -462,10 +647,16 @@ const rootRouteChildren: RootRouteChildren = {
   TimelineRoute: TimelineRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
   VisaCategoriesRoute: VisaCategoriesRoute,
-  CountriesCodeRoute: CountriesCodeRoute,
+  CountrySlugPageSlugRoute: CountrySlugPageSlugRoute,
+  ApiRssRoute: ApiRssRoute,
   UpdatesIdRoute: UpdatesIdRoute,
+  CountrySlugIndexRoute: CountrySlugIndexRoute,
   CountriesIndexRoute: CountriesIndexRoute,
   UpdatesIndexRoute: UpdatesIndexRoute,
+  CountrySlugCompanyCompanySlugRoute: CountrySlugCompanyCompanySlugRoute,
+  CountrySlugJobsJobIdRoute: CountrySlugJobsJobIdRoute,
+  CountrySlugJobsIndexRoute: CountrySlugJobsIndexRoute,
+  CountrySlugSponsorsIndexRoute: CountrySlugSponsorsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

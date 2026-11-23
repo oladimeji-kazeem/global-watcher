@@ -16,8 +16,12 @@ export const Route = createFileRoute("/admin/")({
 const COLORS = ['#2DA099', '#3b82f6', '#8b5cf6', '#eab308', '#ec4899', '#14b8a6', '#f97316', '#64748b'];
 
 function AdminAnalyticsDashboard() {
-    const { countries, changes, analytics } = Route.useLoaderData();
-    const topPagesChartData = analytics.topPages.map(p => ({ name: p.path, views: p.count }));
+    const loaderData = Route.useLoaderData() as any;
+    const countries = Array.isArray(loaderData?.countries) ? loaderData.countries : [];
+    const changes = Array.isArray(loaderData?.changes) ? loaderData.changes : [];
+    const analytics = loaderData?.analytics || {};
+    const topPages = Array.isArray(analytics?.topPages) ? analytics.topPages : [];
+    const topPagesChartData = topPages.map((p: any) => ({ name: p.path, views: p.count }));
 
     // 1. Process Updates by Month (Last 6 Months Area Chart)
     const monthlyUpdates = useMemo(() => {
@@ -30,7 +34,7 @@ function AdminAnalyticsDashboard() {
             counts[label] = 0;
         }
 
-        changes.forEach(c => {
+        changes.forEach((c: any) => {
             const date = new Date(c.effective_date);
             const label = date.toLocaleString('default', { month: 'short' });
             if (counts[label] !== undefined) {
@@ -44,7 +48,7 @@ function AdminAnalyticsDashboard() {
     // 2. Process Updates by Jurisdiction (Bar Chart)
     const jurisdictionTraffic = useMemo(() => {
         const counts: Record<string, number> = {};
-        changes.forEach(c => {
+        changes.forEach((c: any) => {
             counts[c.country] = (counts[c.country] || 0) + 1;
         });
         return Object.entries(counts)
@@ -56,7 +60,7 @@ function AdminAnalyticsDashboard() {
     // 3. Process Visa/Resource Distribution (Pie Chart)
     const resourceDistribution = useMemo(() => {
         const counts: Record<string, number> = {};
-        changes.forEach(c => {
+        changes.forEach((c: any) => {
             counts[c.category] = (counts[c.category] || 0) + 1;
         });
         return Object.entries(counts)
@@ -64,7 +68,7 @@ function AdminAnalyticsDashboard() {
             .map(([name, value]) => ({ name, value }));
     }, [changes]);
 
-    const activeAlertsCount = changes.filter(c => c.status === 'urgent' || c.status === 'warning').length;
+    const activeAlertsCount = changes.filter((c: any) => c.status === 'urgent' || c.status === 'warning').length;
 
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 min-h-screen">

@@ -74,13 +74,13 @@ export function SiteHeader() {
             activeOptions={{ exact: true }}
             className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2 notranslate"
           >
-            {t("nav.dashboard", "Dashboard")}
+            {t("nav.home", "Home")}
           </Link>
           <Link
             to="/updates"
             className="px-5 py-1.5 text-sm font-medium text-muted-foreground rounded-full transition hover:text-foreground hover:bg-background data-[status=active]:text-foreground data-[status=active]:bg-background inline-flex items-center gap-2 notranslate"
           >
-            <Radar className="h-4 w-4" /> {t("nav.updates", "Explore")}
+            <Radar className="h-4 w-4" /> {t("nav.updates", "Policy Updates")}
           </Link>
         </nav>
         <div className="flex items-center gap-2">
@@ -178,6 +178,7 @@ export { ArrowUpRight };
 
 export function AppSidebarLayout({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -190,7 +191,7 @@ export function AppSidebarLayout({ children }: { children: ReactNode }) {
   }, []);
 
   const sideNav: any[] = [
-    { to: "/updates", label: "Database", icon: FileText },
+    { to: "/updates", label: "Policy Updates", icon: FileText },
     { to: "/countries", label: "Countries", icon: Globe },
     { to: "/timeline", label: "Timeline", icon: Clock },
     { to: "/visa-categories", label: "Visa Categories", icon: Shield },
@@ -215,8 +216,8 @@ export function AppSidebarLayout({ children }: { children: ReactNode }) {
             // Map the label to translation key
             const tKey = n.label.toLowerCase().replace(/ /g, "_");
             return (
-              <Link key={i} to={n.to} search={n.search} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card/60 transition data-[status=active]:bg-hero-gradient data-[status=active]:text-white data-[status=active]:glow-cyan hover:text-foreground notranslate">
-                <Icon className="h-4 w-4" /> {t(`nav.${tKey}`, n.label)}
+              <Link key={i} to={n.to} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-card/60 transition data-[status=active]:bg-hero-gradient data-[status=active]:text-white data-[status=active]:glow-cyan hover:text-foreground notranslate">
+                <Icon className="h-4 w-4" /> {(t as any)(`nav.${tKey}`, n.label)}
               </Link>
             )
           })}

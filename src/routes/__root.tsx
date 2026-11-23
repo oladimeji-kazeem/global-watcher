@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import "../lib/i18n";
 
 import appCss from "../styles.css?url";
@@ -38,10 +38,15 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const [showDetails, setShowDetails] = useState(false);
+
+  const errorMessage =
+    error?.message ||
+    (typeof error === "string" ? error : "An unexpected error occurred while loading this page.");
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
+      <div className="max-w-md w-full text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
           This page didn't load
         </h1>
@@ -65,6 +70,27 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             Go home
           </a>
         </div>
+        {errorMessage && (
+          <div className="mt-6 text-left border-t border-border/40 pt-4">
+            <button
+              type="button"
+              onClick={() => setShowDetails(!showDetails)}
+              className="text-xs text-muted-foreground hover:text-foreground transition underline cursor-pointer"
+            >
+              {showDetails ? "Hide technical details" : "Show technical details"}
+            </button>
+            {showDetails && (
+              <div className="mt-2 p-3 rounded-lg bg-card border border-border text-left overflow-auto max-h-48 text-xs font-mono text-red-400">
+                <div className="font-semibold">{errorMessage}</div>
+                {error?.stack && (
+                  <pre className="mt-2 text-[11px] text-muted-foreground whitespace-pre-wrap break-all">
+                    {error.stack}
+                  </pre>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

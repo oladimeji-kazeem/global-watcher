@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public.countries (
   tracked INTEGER NOT NULL DEFAULT 0,
   updates INTEGER NOT NULL DEFAULT 0,
   visa_types TEXT[] NOT NULL DEFAULT '{}',
+  slug TEXT UNIQUE NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -67,13 +68,13 @@ CREATE POLICY "Public read access for timelines" ON public.timelines FOR SELECT 
 
 
 -- Seeding Countries
-INSERT INTO public.countries (code, name, flag, authority, website, tracked, updates, visa_types) VALUES 
-('UK', 'United Kingdom', '🇬🇧', 'Home Office', 'https://www.gov.uk/browse/visas-immigration', 6, 12, '{"Skilled Worker Visa", "Student Visa", "Graduate Visa", "Family Visa", "Global Talent Visa", "Settlement / ILR"}'),
-('CA', 'Canada', '🇨🇦', 'IRCC', 'https://www.canada.ca/en/immigration-refugees-citizenship.html', 8, 9, '{"Express Entry", "PNP", "Study Permit", "PGWP", "Family Sponsorship", "LMIA Work Permit", "Start-up Visa", "Caregiver"}'),
-('AU', 'Australia', '🇦🇺', 'Home Affairs', 'https://immi.homeaffairs.gov.au/', 5, 7, '{"Subclass 482", "Subclass 186", "Subclass 500", "Subclass 189", "Subclass 190"}'),
-('DE', 'Germany', '🇩🇪', 'BAMF', 'https://www.make-it-in-germany.com/', 4, 5, '{"Blue Card EU", "Job Seeker Visa", "Skilled Worker Visa", "Student Visa"}'),
-('US', 'United States', '🇺🇸', 'USCIS', 'https://www.uscis.gov/', 9, 14, '{"H-1B", "H-2B", "L-1", "O-1", "EB-1", "EB-2", "EB-3", "F-1", "Green Card"}'),
-('IE', 'Ireland', '🇮🇪', 'Department of Enterprise, Trade and Employment', 'https://enterprise.gov.ie/', 35, 3, '{"General Employment Permit", "Critical Skills Employment Permit", "Working Holiday"}')
+INSERT INTO public.countries (code, name, flag, authority, website, tracked, updates, visa_types, slug) VALUES 
+('UK', 'United Kingdom', '🇬🇧', 'Home Office', 'https://www.gov.uk/browse/visas-immigration', 6, 12, '{"Skilled Worker Visa", "Student Visa", "Graduate Visa", "Family Visa", "Global Talent Visa", "Settlement / ILR"}', 'uk'),
+('CA', 'Canada', '🇨🇦', 'IRCC', 'https://www.canada.ca/en/immigration-refugees-citizenship.html', 8, 9, '{"Express Entry", "PNP", "Study Permit", "PGWP", "Family Sponsorship", "LMIA Work Permit", "Start-up Visa", "Caregiver"}', 'canada'),
+('AU', 'Australia', '🇦🇺', 'Home Affairs', 'https://immi.homeaffairs.gov.au/', 5, 7, '{"Subclass 482", "Subclass 186", "Subclass 500", "Subclass 189", "Subclass 190"}', 'australia'),
+('DE', 'Germany', '🇩🇪', 'BAMF', 'https://www.make-it-in-germany.com/', 4, 5, '{"Blue Card EU", "Job Seeker Visa", "Skilled Worker Visa", "Student Visa"}', 'germany'),
+('US', 'United States', '🇺🇸', 'USCIS', 'https://www.uscis.gov/', 9, 14, '{"H-1B", "H-2B", "L-1", "O-1", "EB-1", "EB-2", "EB-3", "F-1", "Green Card"}', 'us'),
+('IE', 'Ireland', '🇮🇪', 'Department of Enterprise, Trade and Employment', 'https://enterprise.gov.ie/', 35, 3, '{"General Employment Permit", "Critical Skills Employment Permit", "Working Holiday"}', 'ireland')
 ON CONFLICT (code) DO NOTHING;
 
 
@@ -117,7 +118,13 @@ CREATE TABLE IF NOT EXISTS public.admin_users (
 );
 ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read access for admin_users" ON public.admin_users;
-CREATE POLICY "Public read access for admin_users" ON public.admin_users FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins can view own admin record" ON public.admin_users;
+
+-- Restrict read access: only authenticated users matching their own email can view their admin status
+-- Anonymous clients cannot enumerate or read administrator emails
+CREATE POLICY "Admins can view own admin record" ON public.admin_users
+  FOR SELECT TO authenticated
+  USING (email = (auth.jwt() ->> 'email'));
 
 -- Create Watchlists Table
 CREATE TABLE IF NOT EXISTS public.watchlists (
@@ -155,3 +162,58 @@ ALTER TABLE public.immigration_changes ADD COLUMN IF NOT EXISTS analytic_diagnos
 ALTER TABLE public.immigration_changes ADD COLUMN IF NOT EXISTS analytic_predictive TEXT;
 ALTER TABLE public.immigration_changes ADD COLUMN IF NOT EXISTS analytic_prescriptive TEXT;
 
+
+-- Create Sponsor Organizations Table
+CREATE TABLE IF NOT EXISTS public.sponsor_organizations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  country_code TEXT NOT NULL REFERENCES public.countries(code) ON DELETE CASCADE,
+  website_url TEXT,
+  industry TEXT,
+  sponsor_status TEXT NOT NULL DEFAULT 'active',
+  slug TEXT UNIQUE NOT NULL,
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.sponsor_organizations ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public read access for sponsor_organizations" ON public.sponsor_organizations;
+CREATE POLICY "Public read access for sponsor_organizations" ON public.sponsor_organizations FOR SELECT USING (true);
+
+
+-- Create Country Pages Table
+CREATE TABLE IF NOT EXISTS public.country_pages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  country_code TEXT NOT NULL REFERENCES public.countries(code) ON DELETE CASCADE,
+  slug TEXT NOT NULL,
+  title TEXT NOT NULL,
+  content_markdown TEXT NOT NULL,
+  is_published BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(country_code, slug)
+);
+
+ALTER TABLE public.country_pages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public read access for country_pages" ON public.country_pages;
+CREATE POLICY "Public read access for country_pages" ON public.country_pages FOR SELECT USING (is_published = true);
+
+
+-- Create Sponsored Jobs Table
+CREATE TABLE IF NOT EXISTS public.sponsored_jobs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sponsor_id UUID NOT NULL REFERENCES public.sponsor_organizations(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  location_city TEXT,
+  job_type TEXT,
+  requirements TEXT,
+  source_url TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.sponsored_jobs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public read access for sponsored_jobs" ON public.sponsored_jobs;
+CREATE POLICY "Public read access for sponsored_jobs" ON public.sponsored_jobs FOR SELECT USING (true);

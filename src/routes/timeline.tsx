@@ -17,9 +17,11 @@ export const Route = createFileRoute("/timeline")({
 });
 
 function TimelinePage() {
-  const { timeline, changes } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
+  const timeline = Array.isArray(loaderData?.timeline) ? loaderData.timeline : [];
+  const rawChanges = Array.isArray(loaderData?.changes) ? loaderData.changes : [];
   // Merge structured yearly timeline with sorted DB entries
-  const sorted = [...changes].sort((a, b) => new Date(b.effective_date).getTime() - new Date(a.effective_date).getTime());
+  const sorted = [...rawChanges].sort((a, b) => new Date(b.effective_date || 0).getTime() - new Date(a.effective_date || 0).getTime());
   return (
     <AppSidebarLayout>
       <main>

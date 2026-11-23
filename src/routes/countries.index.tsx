@@ -18,7 +18,8 @@ export const Route = createFileRoute("/countries/")({
 });
 
 function CountriesPage() {
-  const { countries } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
+  const countries = Array.isArray(loaderData?.countries) ? loaderData.countries : [];
   return (
     <AppSidebarLayout>
       <main>
@@ -79,7 +80,7 @@ function CountriesPage() {
                       {c.updates}
                     </div>
                     <div className="text-right mt-2 lg:mt-0 flex flex-col items-end justify-center">
-                      <Link to="/countries/$code" params={{ code: c.code.toLowerCase() }} className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border/50 text-muted-foreground hover:bg-[color:var(--primary)]/10 hover:text-[color:var(--primary)] hover:border-[color:var(--primary)]/30 transition shadow-sm" title="View Strategic Insights">
+                      <Link to="/$countrySlug" params={{ countrySlug: c.slug }} className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-border/50 text-muted-foreground hover:bg-[color:var(--primary)]/10 hover:text-[color:var(--primary)] hover:border-[color:var(--primary)]/30 transition shadow-sm" title="View Strategic Insights">
                         <Eye className="h-4 w-4" />
                       </Link>
                     </div>

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Bell, Check, Info, Mail, Radar, Sparkles } from "lucide-react";
 import { statusStyles, formatDate, type ChangeStatus, fetchChanges, getFilterOptions } from "@/lib/data-service";
 import { AppSidebarLayout, PageHeader } from "@/components/site-shell";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/watchlist")({
   loader: async () => {
@@ -40,12 +41,12 @@ async function loadPrefs(): Promise<Preferences> {
   try {
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) return DEFAULTS;
-    
+
     const { data, error } = await supabase.from("watchlists").select("*").eq("user_id", sessionData.session.user.id).maybeSingle();
     if (error || !data) return { ...DEFAULTS, email: sessionData.session.user.email || "" };
-    
+
     return {
-      email: data.email,
+      email: data.email || "",
       countries: data.countries,
       visaTypes: data.visa_types,
       statuses: data.statuses as ChangeStatus[],
@@ -56,13 +57,18 @@ async function loadPrefs(): Promise<Preferences> {
 }
 
 function WatchlistPage() {
-  const { changes, options: { countries, visaTypes: allVisaTypes, statuses: allStatuses } } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
+  const changes = Array.isArray(loaderData?.changes) ? loaderData.changes : [];
+  const options = loaderData?.options || { countries: [], visaTypes: [], statuses: [] };
+  const countries = options.countries || [];
+  const allVisaTypes = options.visaTypes || [];
+  const allStatuses = options.statuses || [];
   const [prefs, setPrefs] = useState<Preferences>(DEFAULTS);
   const [saved, setSaved] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => { 
-    loadPrefs().then(p => { setPrefs(p); setHydrated(true); }); 
+  useEffect(() => {
+    loadPrefs().then(p => { setPrefs(p); setHydrated(true); });
   }, []);
 
   const toggle = <K extends keyof Preferences>(key: K, value: string) =>
@@ -85,7 +91,7 @@ function WatchlistPage() {
     e.preventDefault();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
-    
+
     await supabase.from("watchlists").upsert({
       user_id: session.user.id,
       email: prefs.email,
@@ -95,7 +101,7 @@ function WatchlistPage() {
       enabled: prefs.enabled,
       updated_at: new Date().toISOString()
     });
-    
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
   };

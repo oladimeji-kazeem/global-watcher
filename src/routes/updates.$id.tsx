@@ -39,8 +39,11 @@ export const Route = createFileRoute("/updates/$id")({
 });
 
 function ChangeDetail() {
-  const { change: c, related } = Route.useLoaderData();
-  const s = statusStyles[c.status];
+  const loaderData = Route.useLoaderData();
+  const c = loaderData?.change;
+  const related = Array.isArray(loaderData?.related) ? loaderData.related : [];
+  if (!c) return null;
+  const s = statusStyles[c.status] || statusStyles.info;
 
   return (
     <main className="mx-auto max-w-5xl px-6 pt-12 pb-24">

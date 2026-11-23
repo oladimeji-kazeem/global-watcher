@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { Sparkles, BrainCircuit, ArrowRight, ArrowLeft, Target, GraduationCap, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const Route = createFileRoute('/eligibility')({
-    component: EligibilityPredictorPage,
+  head: () => ({
+    meta: [
+      { title: "Eligibility Predictor — Immigration Radar" },
+      { name: "description", content: "Benchmark your eligibility for skilled worker and points-tested visa programs across major global jurisdictions." },
+    ],
+  }),
+  component: EligibilityPredictorPage,
 })
 
 function EligibilityPredictorPage() {

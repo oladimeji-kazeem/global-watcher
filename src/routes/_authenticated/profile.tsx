@@ -7,6 +7,11 @@ import { checkIsAdmin } from "@/lib/admin.functions";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/profile")({
+  head: () => ({
+    meta: [
+      { title: "Account Profile & Preferences — Immigration Radar" },
+    ],
+  }),
   component: ProfilePage,
 });
 

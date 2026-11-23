@@ -1,9 +1,14 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { Outlet, Link, useLocation } from '@tanstack/react-start'
+import { Outlet, Link, useLocation } from '@tanstack/react-router'
 import { LayoutDashboard, Database, ShieldAlert, ArrowLeft, Users } from 'lucide-react'
 import { checkIsAdmin } from '@/lib/admin.functions'
 
 export const Route = createFileRoute('/admin')({
+  head: () => ({
+    meta: [
+      { title: "Command Center & Analytics — Immigration Radar" },
+    ],
+  }),
   beforeLoad: async () => {
     try {
       await checkIsAdmin();
@@ -48,7 +53,28 @@ function AdminLayout() {
                 to="/admin/content"
                 className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition group relative overflow-hidden ${pathname === '/admin/content' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' : 'border-transparent text-muted-foreground hover:bg-white/[0.02] hover:text-white'}`}
               >
-                <Database className="h-4 w-4" /> Content Manager
+                <Database className="h-4 w-4" /> Updates Manager
+              </Link>
+
+              <Link
+                to="/admin/sponsors"
+                className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition group relative overflow-hidden ${pathname === '/admin/sponsors' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' : 'border-transparent text-muted-foreground hover:bg-white/[0.02] hover:text-white'}`}
+              >
+                <Database className="h-4 w-4" /> Sponsors Manager
+              </Link>
+
+              <Link
+                to="/admin/jobs"
+                className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition group relative overflow-hidden ${pathname === '/admin/jobs' ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'border-transparent text-muted-foreground hover:bg-white/[0.02] hover:text-white'}`}
+              >
+                <Database className="h-4 w-4" /> Jobs Manager
+              </Link>
+
+              <Link
+                to="/admin/pages"
+                className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm font-medium transition group relative overflow-hidden ${pathname === '/admin/pages' ? 'bg-orange-500/10 text-orange-400 border-orange-500/30' : 'border-transparent text-muted-foreground hover:bg-white/[0.02] hover:text-white'}`}
+              >
+                <Database className="h-4 w-4" /> Pages Manager
               </Link>
 
               <div className="h-px w-full bg-border/40 my-4" />

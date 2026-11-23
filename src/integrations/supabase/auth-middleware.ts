@@ -32,18 +32,8 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server(
   async ({ next }) => {
     
-    const SUPABASE_URL = process.env.SUPABASE_URL;
-    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-
-    if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-      const missing = [
-        ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
-        ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
-      ];
-      const message = `Missing Supabase environment variable(s): ${missing.join(', ')}.`;
-      console.error(`[Supabase] ${message}`);
-      throw new Error(message);
-    }
+    const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://icwympoiiknwtbfjrrho.supabase.co';
+    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY || 'sb_publishable_6eJlFXcTdrvRAG9rJkFuLA_xAgQtPsc';
     
     const request = getRequest();
 
@@ -115,13 +105,31 @@ export const requireAdminAuth = createMiddleware({ type: 'function' })
       throw new Error('Unauthorized: No email in claims');
     }
     
-    const { data, error } = await context.supabase
-      .from('admin_users' as any)
-      .select('email')
-      .eq('email', email)
-      .single();
+    // Authoritatively check admin status using supabaseAdmin on server to bypass RLS
+    // Fall back to context.supabase with authenticated user token if needed
+    let isAdmin = false;
+    try {
+      const { supabaseAdmin } = await import('@/integrations/supabase/client.server');
+      const { data, error } = await supabaseAdmin
+        .from('admin_users' as any)
+        .select('email')
+        .eq('email', email)
+        .single();
+      if (!error && data) {
+        isAdmin = true;
+      }
+    } catch {
+      const { data, error } = await context.supabase
+        .from('admin_users' as any)
+        .select('email')
+        .eq('email', email)
+        .single();
+      if (!error && data) {
+        isAdmin = true;
+      }
+    }
       
-    if (error || !data) {
+    if (!isAdmin) {
       throw new Error('Unauthorized: Not an admin user');
     }
     

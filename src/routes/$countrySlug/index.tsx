@@ -1,13 +1,12 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { fetchCountries, fetchChangesByCountry } from "@/lib/data-service";
+import { fetchCountryBySlug, fetchChangesByCountry } from "@/lib/data-service";
 import { AppSidebarLayout } from "@/components/site-shell";
-import { ArrowLeft, Briefcase, TrendingUp, Lightbulb, GraduationCap, Building2 } from "lucide-react";
+import { ArrowLeft, Briefcase, TrendingUp, Lightbulb, GraduationCap, Building2, FileText } from "lucide-react";
 import { ChangeCard } from "@/components/change-card";
 
-export const Route = createFileRoute("/countries/$code")({
+export const Route = createFileRoute("/$countrySlug/")({
     loader: async ({ params }) => {
-        const countries = await fetchCountries();
-        const country = countries.find(c => c.code.toLowerCase() === params.code.toLowerCase());
+        const country = await fetchCountryBySlug(params.countrySlug);
         if (!country) throw notFound();
         const changes = await fetchChangesByCountry(country.name);
         return { country, changes };
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/countries/$code")({
         const { country } = loaderData;
         return {
             meta: [
-                { title: `${country.name} Immigration Rules & Visa Updates 2026` },
+                { title: `${country.name} Immigration Rules & Visa Updates 2026 — Immigration Radar` },
                 { name: "description", content: `Track the latest immigration rules, visa policy changes, and skilled worker requirements for ${country.name}.` }
             ]
         };
@@ -52,8 +51,11 @@ const mockIntelligence = (code: string) => {
 }
 
 function CountryStrategyPage() {
-    const { country, changes } = Route.useLoaderData();
-    const intel = mockIntelligence(country.code);
+    const loaderData = Route.useLoaderData();
+    const country = loaderData?.country;
+    const changes = Array.isArray(loaderData?.changes) ? loaderData.changes : [];
+    if (!country) return null;
+    const intel = mockIntelligence(country.code || "");
 
     const structuredData = {
         "@context": "https://schema.org",
@@ -97,6 +99,21 @@ function CountryStrategyPage() {
                                 <p className="text-muted-foreground font-medium mt-1">Strategic Immigration & Policy Intelligence</p>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Portal Quick Links */}
+                <div className="mx-auto max-w-5xl px-6 mb-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <Link to="/$countrySlug/sponsors" params={{ countrySlug: country.slug }} className="p-4 rounded-xl border border-border bg-card/40 hover:bg-card hover:border-[color:var(--primary)]/50 transition flex items-center gap-3">
+                            <Building2 className="h-5 w-5 text-[color:var(--primary)]" />
+                            <span className="font-semibold text-sm">Visa Sponsors</span>
+                        </Link>
+                        <Link to="/$countrySlug/jobs" params={{ countrySlug: country.slug }} className="p-4 rounded-xl border border-border bg-card/40 hover:bg-card hover:border-[color:var(--primary)]/50 transition flex items-center gap-3">
+                            <Briefcase className="h-5 w-5 text-[color:var(--primary)]" />
+                            <span className="font-semibold text-sm">Sponsored Jobs</span>
+                        </Link>
+                        {/* We could fetch country_pages here and list them, but for now we just link the structure */}
                     </div>
                 </div>
 

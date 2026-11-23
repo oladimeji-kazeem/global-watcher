@@ -3,6 +3,12 @@ import { AppSidebarLayout } from "@/components/site-shell";
 import { useState } from "react";
 
 export const Route = createFileRoute("/visa-categories")({
+  head: () => ({
+    meta: [
+      { title: "Global Visa Categories Directory — Immigration Radar" },
+      { name: "description", content: "Explore visa categories, processing times, fees, and requirements across the UK, Canada, Australia, Germany, US, and Ireland." },
+    ],
+  }),
   component: VisaCategoriesPage,
 });
 

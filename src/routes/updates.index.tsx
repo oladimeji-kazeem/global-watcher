@@ -48,7 +48,13 @@ const SORT_OPTIONS: [Search["sort"], string][] = [
 ];
 
 function UpdatesDatabase() {
-  const { changes, options: { countries: allCountries, visaTypes: allVisaTypes, statuses: allStatuses } } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData();
+  const changes = Array.isArray(loaderData?.changes) ? loaderData.changes : [];
+  const options = loaderData?.options || { countries: [], visaTypes: [], statuses: [] };
+  const allCountries = options.countries || [];
+  const allVisaTypes = options.visaTypes || [];
+  const allStatuses = options.statuses || [];
+
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const [localQ, setLocalQ] = useState(search.q);
@@ -58,9 +64,15 @@ function UpdatesDatabase() {
     navigate({ search: (prev: any) => ({ ...prev, ...patch, page: "page" in patch ? patch.page : 1 }) });
 
   const filtered = useMemo(() => {
-    const q = search.q.toLowerCase();
+    const q = (search.q || "").toLowerCase().trim();
     const rows = changes.filter((c) => {
-      if (q && !(c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.country.toLowerCase().includes(q) || c.visa_type.toLowerCase().includes(q))) return false;
+      if (!c) return false;
+      const title = (c.title || "").toLowerCase();
+      const desc = (c.description || "").toLowerCase();
+      const country = (c.country || "").toLowerCase();
+      const visa = (c.visa_type || "").toLowerCase();
+
+      if (q && !(title.includes(q) || desc.includes(q) || country.includes(q) || visa.includes(q))) return false;
       if (search.country !== "all" && c.country !== search.country) return false;
       if (search.visa !== "all" && c.visa_type !== search.visa) return false;
       if (search.status !== "all" && c.status !== search.status) return false;
@@ -70,14 +82,29 @@ function UpdatesDatabase() {
     });
     const sorted = [...rows];
     switch (search.sort) {
-      case "date_asc": sorted.sort((a, b) => +new Date(a.effective_date) - +new Date(b.effective_date)); break;
-      case "severity_desc": sorted.sort((a, b) => SEVERITY_RANK[b.status] - SEVERITY_RANK[a.status] || +new Date(b.effective_date) - +new Date(a.effective_date)); break;
-      case "severity_asc": sorted.sort((a, b) => SEVERITY_RANK[a.status] - SEVERITY_RANK[b.status] || +new Date(a.effective_date) - +new Date(b.effective_date)); break;
+      case "date_asc":
+        sorted.sort((a, b) => +new Date(a.effective_date || 0) - +new Date(b.effective_date || 0));
+        break;
+      case "severity_desc":
+        sorted.sort(
+          (a, b) =>
+            (SEVERITY_RANK[b.status as ChangeStatus] ?? 0) - (SEVERITY_RANK[a.status as ChangeStatus] ?? 0) ||
+            +new Date(b.effective_date || 0) - +new Date(a.effective_date || 0)
+        );
+        break;
+      case "severity_asc":
+        sorted.sort(
+          (a, b) =>
+            (SEVERITY_RANK[a.status as ChangeStatus] ?? 0) - (SEVERITY_RANK[b.status as ChangeStatus] ?? 0) ||
+            +new Date(a.effective_date || 0) - +new Date(b.effective_date || 0)
+        );
+        break;
       case "date_desc":
-      default: sorted.sort((a, b) => +new Date(b.effective_date) - +new Date(a.effective_date));
+      default:
+        sorted.sort((a, b) => +new Date(b.effective_date || 0) - +new Date(a.effective_date || 0));
     }
     return sorted;
-  }, [search]);
+  }, [search, changes]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, search.page), totalPages);

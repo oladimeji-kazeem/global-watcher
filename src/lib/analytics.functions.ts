@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
+import { requireAdminAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 export const trackPageView = createServerFn({ method: "POST" })
-  .inputValidator((input: { path: string; referrer: string }) => 
+  .validator((input: { path: string; referrer: string }) => 
     z.object({ path: z.string(), referrer: z.string().optional().default("") }).parse(input)
   )
   .handler(async ({ data }) => {
@@ -11,10 +12,10 @@ export const trackPageView = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Non-blocking insert
-    supabaseAdmin.from("analytics_page_views").insert({
+    (supabaseAdmin as any).from("analytics_page_views").insert({
       path: data.path,
       referrer: data.referrer
-    }).then(({ error }) => {
+    }).then(({ error }: any) => {
       if (error) console.error("[Analytics] Failed to track page view:", error.message);
     });
     
@@ -22,21 +23,22 @@ export const trackPageView = createServerFn({ method: "POST" })
   });
 
 export const getAnalyticsStats = createServerFn({ method: "GET" })
+  .middleware([requireAdminAuth])
   .handler(async () => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    
+
     // Fetch last 30 days of page views
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
-    const { data: views, error } = await supabaseAdmin
+    const { error, data: views } = await (supabaseAdmin as any)
       .from("analytics_page_views")
       .select("path, referrer, created_at")
       .gte("created_at", thirtyDaysAgo.toISOString());
       
     if (error || !views) {
       console.error("[Analytics] Error fetching stats:", error?.message);
-      return { totalViews: 0, topPages: [], topReferrers: [], history: [] };
+      return { totalViews: 0, topPages: [], topReferrers: [], dailyViews: [] };
     }
     
     const totalViews = views.length;
@@ -47,7 +49,7 @@ export const getAnalyticsStats = createServerFn({ method: "GET" })
       return acc;
     }, {});
     const topPages = Object.entries(pathCounts)
-      .map(([path, count]) => ({ path, count }))
+      .map(([path, count]) => ({ path, count: count as number }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
       
@@ -58,7 +60,7 @@ export const getAnalyticsStats = createServerFn({ method: "GET" })
       return acc;
     }, {});
     const topReferrers = Object.entries(refCounts)
-      .map(([referrer, count]) => ({ referrer, count }))
+      .map(([referrer, count]) => ({ referrer, count: count as number }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
       

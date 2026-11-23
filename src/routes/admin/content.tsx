@@ -15,7 +15,8 @@ export const Route = createFileRoute("/admin/content")({
 
 function AdminContentManager() {
     const router = useRouter();
-    const { changes: initialChanges } = Route.useLoaderData();
+    const loaderData = Route.useLoaderData();
+    const initialChanges = Array.isArray(loaderData?.changes) ? loaderData.changes : [];
     const [changes, setChanges] = useState<ImmigrationChange[]>(initialChanges);
     const [search, setSearch] = useState("");
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -25,8 +26,8 @@ function AdminContentManager() {
     const [editingChange, setEditingChange] = useState<ImmigrationChange | null>(null);
 
     const filtered = changes.filter(c =>
-        c.title.toLowerCase().includes(search.toLowerCase()) ||
-        c.country.toLowerCase().includes(search.toLowerCase())
+        (c.title || "").toLowerCase().includes(search.toLowerCase()) ||
+        (c.country || "").toLowerCase().includes(search.toLowerCase())
     );
 
     const handleDelete = async (id: string) => {

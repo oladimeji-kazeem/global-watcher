@@ -4,6 +4,12 @@ import { useState } from 'react';
 import { Scale, CheckCircle2, XCircle, ArrowRight, TrendingUp, Clock, Landmark } from 'lucide-react';
 
 export const Route = createFileRoute('/compare')({
+  head: () => ({
+    meta: [
+      { title: "Policy Comparison Matrix — Immigration Radar" },
+      { name: "description", content: "Compare salary thresholds, permanent residency timelines, and visa rights across major global destinations." },
+    ],
+  }),
   component: ComparisonSimulatorPage,
 })
 

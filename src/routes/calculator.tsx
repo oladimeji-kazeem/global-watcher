@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { Calculator, Globe2, Users, Banknote, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 export const Route = createFileRoute('/calculator')({
-    component: CostSimulatorPage,
+  head: () => ({
+    meta: [
+      { title: "Global Cost Simulator — Immigration Radar" },
+      { name: "description", content: "Calculate visa application fees, health surcharges (IHS), and proof-of-funds across major destinations." },
+    ],
+  }),
+  component: CostSimulatorPage,
 })
 
 const MOCK_FEES: Record<string, { appFee: number, healthSurcharge: number, poF: number }> = {

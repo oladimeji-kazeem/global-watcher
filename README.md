@@ -21,8 +21,8 @@ Designed for advisers, employers, and expats, Immigration Radar replaces manual 
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/your-username/global-watcher.git
-cd global-watcher
+git clone https://github.com/your-username/immigration-radar.git
+cd immigration-radar
 npm install
 ```
 
