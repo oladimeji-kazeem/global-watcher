@@ -93,6 +93,7 @@
     "vite": "^8.0.16"
   },
   "overrides": {
+    "@tanstack/react-start": "^1.168.60",
     "seroval": "^1.8.2",
     "seroval-plugins": "^1.8.0"
   }
