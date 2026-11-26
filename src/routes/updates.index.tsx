@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Search, Filter, X, Calendar, ArrowUpRight, ArrowUpDown, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import {
   statusStyles, formatDate, type ChangeStatus,
@@ -13,20 +12,20 @@ const PAGE_SIZE = 10;
 const SEVERITY_RANK: Record<ChangeStatus, number> = { urgent: 3, warning: 2, info: 1, approved: 0 };
 
 const searchSchema = z.object({
-  q: fallback(z.string(), "").default(""),
-  country: fallback(z.string(), "all").default("all"),
-  visa: fallback(z.string(), "all").default("all"),
-  status: fallback(z.string(), "all").default("all"),
-  from: fallback(z.string(), "").default(""),
-  to: fallback(z.string(), "").default(""),
-  sort: fallback(z.string(), "date_desc").default("date_desc"),
-  page: fallback(z.number().int(), 1).default(1),
+  q: z.string().catch("").default(""),
+  country: z.string().catch("all").default("all"),
+  visa: z.string().catch("all").default("all"),
+  status: z.string().catch("all").default("all"),
+  from: z.string().catch("").default(""),
+  to: z.string().catch("").default(""),
+  sort: z.string().catch("date_desc").default("date_desc"),
+  page: z.number().int().catch(1).default(1),
 });
 
 type Search = z.infer<typeof searchSchema>;
 
 export const Route = createFileRoute("/updates/")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: (search: Record<string, unknown>): Search => searchSchema.parse(search),
   loader: async () => {
     const [changes, options] = await Promise.all([fetchChanges(), getFilterOptions()]);
     return { changes, options };
